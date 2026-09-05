@@ -136,12 +136,13 @@ def prepare_task(repo_path, task, parent_commit):
 
 
 def run_pytest_on(repo_path, targets):
-    """Run pytest on specific paths (or full suite if targets is empty)."""
-    args = ["pytest", "-x", "-q"]
+    args = [sys.executable, "-m", "pytest", "-x", "-q"]
     if targets:
         args += targets
+    env = {**os.environ, "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1"}
     r = subprocess.run(
-        args, cwd=repo_path, capture_output=True, text=True, timeout=600,
+        args, cwd=repo_path, capture_output=True, text=True,
+        timeout=600, env=env,
     )
     return r.returncode == 0, r.stdout + r.stderr
 
