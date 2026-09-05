@@ -18,3 +18,20 @@ Size filters: 3 <= LOC <= 300, files <= 4
 
 Task-draw seed: 42 (in draw_tasks.py)
 Holdout-split seed: 137 (in draw_tasks.py)
+
+Protocol v3, 2026-09-04
+Change from v2: harness now resets to per-task pre-fix commit (parent of
+reference PR merge commit) and restores reference-PR test files as the
+correctness oracle, instead of running against a single frozen HEAD.
+Reason: v2 harness ran agents against a repo state that already contained
+every fix in the task list; tests trivially passed and provided no signal.
+The frozen_commit.txt file remains as a metadata pin for the candidate
+enumeration (task selection freeze), not as the per-run repo state.
+
+Test-file identification heuristic: files under tests/, or with basename
+starting test_, or ending _test.py.
+
+Oracle: pytest on the identified test files. If a task has no test files
+in its reference PR, the operator is warned and the outcome falls back to
+the full-suite pass check (recorded but marked as no-oracle in the run
+summary).
