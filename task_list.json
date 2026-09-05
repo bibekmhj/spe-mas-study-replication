@@ -1,0 +1,245 @@
+[
+  {
+    "task_source": "pr",
+    "pr_number": 1865,
+    "pr_title": "Fix compatibility when SIGINT handler is installed by non-Python",
+    "pr_url": "https://github.com/prompt-toolkit/python-prompt-toolkit/pull/1865",
+    "pr_body": "When a native (Rust, C) program installs SIGINT handler and calls into Python, `signal.getsignal` can return `None`, which is not a valid value for the 2nd parameter of `signal.signal`. Fix it by checking `None` explicitly.",
+    "pr_merge_commit": "85079ad4d726e64089d9e0efa9faa36a084b7d67",
+    "loc_touched": 3,
+    "files_touched": [
+      "src/prompt_toolkit/application/application.py"
+    ],
+    "linked_issue_numbers": [],
+    "task_id": "T01",
+    "assignment": "training"
+  },
+  {
+    "task_source": "pr",
+    "pr_number": 2070,
+    "pr_title": "Fix FuzzyWordCompleter meta_dict type hint to match WordCompleter",
+    "pr_url": "https://github.com/prompt-toolkit/python-prompt-toolkit/pull/2070",
+    "pr_body": "Fixes #2039.\r\n\r\n`FuzzyWordCompleter` types `meta_dict` as `dict[str, str] | None` and then forwards it straight into `WordCompleter`, which declares the same parameter as `Mapping[str, AnyFormattedText] | None`. So the wrapper rejects values the wrapped class would happily accept \u2014 passing in something like `{\"alpha\": HTML(\"<b>first</b>\")}` works at runtime but trips the type checker.\r\n\r\nWidened it to match `WordCompleter`. `AnyFormattedText` is already imported in this file, just needed to add `Mapping` from typing. No runtime behavior change.",
+    "pr_merge_commit": "8f3212dd54a256a394e3734927d0f7ab5fc4c108",
+    "loc_touched": 6,
+    "files_touched": [
+      "src/prompt_toolkit/completion/fuzzy_completer.py",
+      "src/prompt_toolkit/widgets/base.py"
+    ],
+    "linked_issue_numbers": [
+      2039
+    ],
+    "task_id": "T02",
+    "assignment": "holdout"
+  },
+  {
+    "task_source": "pr",
+    "pr_number": 1151,
+    "pr_title": "A few pyflakes fixes: added several imports to __all__.",
+    "pr_url": "https://github.com/prompt-toolkit/python-prompt-toolkit/pull/1151",
+    "pr_body": "",
+    "pr_merge_commit": "5f2268d9232f5d300b4a3226c6e82fe44c60f9ca",
+    "loc_touched": 5,
+    "files_touched": [
+      "prompt_toolkit/contrib/completers/__init__.py",
+      "prompt_toolkit/contrib/regular_languages/__init__.py",
+      "prompt_toolkit/shortcuts/__init__.py"
+    ],
+    "linked_issue_numbers": [],
+    "task_id": "T03",
+    "assignment": "holdout"
+  },
+  {
+    "task_source": "pr",
+    "pr_number": 1827,
+    "pr_title": "Fix line wrapping in `patch_stdout` on Windows.",
+    "pr_url": "https://github.com/prompt-toolkit/python-prompt-toolkit/pull/1827",
+    "pr_body": "Enable autowrap before writing data to the output in `patch_stdout`. We enable/disable VT terminal processing during every `flush()` of the Windows Output implementation, but it turns out that this causes the autowrap flag to be reset each time. Because of this, we have to enable autowrap each time before writing.",
+    "pr_merge_commit": "55cde3eb0e1be72d9232e979a708f1a792339ad9",
+    "loc_touched": 13,
+    "files_touched": [
+      "src/prompt_toolkit/application/application.py",
+      "src/prompt_toolkit/eventloop/inputhook.py",
+      "src/prompt_toolkit/patch_stdout.py"
+    ],
+    "linked_issue_numbers": [],
+    "task_id": "T04",
+    "assignment": "training"
+  },
+  {
+    "task_source": "pr",
+    "pr_number": 1836,
+    "pr_title": "fix memory leak for prompt_toolkit.filters.base.Never/Always and inline condition filter",
+    "pr_url": "https://github.com/prompt-toolkit/python-prompt-toolkit/pull/1836",
+    "pr_body": "Reference: https://github.com/prompt-toolkit/python-prompt-toolkit/issues/1835\r\n`Never/Always` is cached in `prompt_toolkit.filters.utils._bool_to_filter`, and if it is the first condition, it will hold the filter and cannot be freed.\r\n\r\nThe inline condition filter will have a different ID after the parent function is called (a new PromptSession is created). It will be cached by some global condition filter (e.g., is_searching), causing the cached size to increase and never be freed.",
+    "pr_merge_commit": "465ab02854763fafc0099a2e38a56328c1cb0625",
+    "loc_touched": 91,
+    "files_touched": [
+      "src/prompt_toolkit/filters/base.py",
+      "src/prompt_toolkit/key_binding/bindings/basic.py",
+      "src/prompt_toolkit/key_binding/bindings/emacs.py",
+      "src/prompt_toolkit/key_binding/bindings/vi.py"
+    ],
+    "linked_issue_numbers": [],
+    "task_id": "T05",
+    "assignment": "training"
+  },
+  {
+    "task_source": "pr",
+    "pr_number": 4,
+    "pr_title": "Fix C-w and C-u in the insert mode.",
+    "pr_url": "https://github.com/prompt-toolkit/python-prompt-toolkit/pull/4",
+    "pr_body": "",
+    "pr_merge_commit": "18cbb523d51658a9451e53d4b84c60145c054da5",
+    "loc_touched": 10,
+    "files_touched": [
+      "prompt_toolkit/key_bindings/basic.py"
+    ],
+    "linked_issue_numbers": [],
+    "task_id": "T06",
+    "assignment": "holdout"
+  },
+  {
+    "task_source": "pr",
+    "pr_number": 2027,
+    "pr_title": "Small typing fixes.",
+    "pr_url": "https://github.com/prompt-toolkit/python-prompt-toolkit/pull/2027",
+    "pr_body": "",
+    "pr_merge_commit": "8566f9b8c4b64364916f16163cd5738e78922ea5",
+    "loc_touched": 7,
+    "files_touched": [
+      "src/prompt_toolkit/formatted_text/base.py",
+      "src/prompt_toolkit/lexers/pygments.py"
+    ],
+    "linked_issue_numbers": [],
+    "task_id": "T07",
+    "assignment": "holdout"
+  },
+  {
+    "task_source": "pr",
+    "pr_number": 705,
+    "pr_title": "Fixed PosixPipeInput import/name",
+    "pr_url": "https://github.com/prompt-toolkit/python-prompt-toolkit/pull/705",
+    "pr_body": "related to: 31906ded50fffe71e6855d7ebd8c8f79a591593d and dc7b91be3ca8f106b2225db9ef986ef937f85405\r\n\r\nI also fixed a typo.",
+    "pr_merge_commit": "fc4d8a0f21077d25285779ed3abe750ea7ae2d28",
+    "loc_touched": 6,
+    "files_touched": [
+      "prompt_toolkit/contrib/telnet/server.py",
+      "prompt_toolkit/input/defaults.py"
+    ],
+    "linked_issue_numbers": [],
+    "task_id": "T08",
+    "assignment": "training"
+  },
+  {
+    "task_source": "pr",
+    "pr_number": 2034,
+    "pr_title": "Fix nested completer which got broken in previous 'get_word_before_cursor' fix",
+    "pr_url": "https://github.com/prompt-toolkit/python-prompt-toolkit/pull/2034",
+    "pr_body": "Fix bug introduced in https://github.com/prompt-toolkit/python-prompt-toolkit/pull/2025",
+    "pr_merge_commit": "2aec8202cda4d1b9d62e6cae0c667790ea371d7d",
+    "loc_touched": 15,
+    "files_touched": [
+      "src/prompt_toolkit/document.py",
+      "src/prompt_toolkit/shortcuts/dialogs.py",
+      "tests/test_document.py"
+    ],
+    "linked_issue_numbers": [],
+    "task_id": "T09",
+    "assignment": "training"
+  },
+  {
+    "task_source": "pr",
+    "pr_number": 1262,
+    "pr_title": "Fix: Typo and whitespace",
+    "pr_url": "https://github.com/prompt-toolkit/python-prompt-toolkit/pull/1262",
+    "pr_body": "Needed whitespace for the docstring to render correctly after running\r\nthe project through sphinx. As it stands, the current `-` renders on the\r\nsame line as the previous one instead of starting a unordered list.\r\n\r\nAlso fix a misspelling.",
+    "pr_merge_commit": "133eaf25ecec2acf63015e0d9ca3b2fe6836e4ea",
+    "loc_touched": 3,
+    "files_touched": [
+      "prompt_toolkit/application/application.py"
+    ],
+    "linked_issue_numbers": [],
+    "task_id": "T10",
+    "assignment": "training"
+  },
+  {
+    "task_source": "pr",
+    "pr_number": 888,
+    "pr_title": "Fix docstring for output.base.Output",
+    "pr_url": "https://github.com/prompt-toolkit/python-prompt-toolkit/pull/888",
+    "pr_body": "",
+    "pr_merge_commit": "eee625be858316fff0a0dc032bf5843fa17a54bd",
+    "loc_touched": 4,
+    "files_touched": [
+      "prompt_toolkit/output/base.py"
+    ],
+    "linked_issue_numbers": [],
+    "task_id": "T11",
+    "assignment": "training"
+  },
+  {
+    "task_source": "pr",
+    "pr_number": 1482,
+    "pr_title": "Unicode windows fix",
+    "pr_url": "https://github.com/prompt-toolkit/python-prompt-toolkit/pull/1482",
+    "pr_body": "Same as https://github.com/prompt-toolkit/python-prompt-toolkit/pull/1478\r\nBut squashed and applied \"black\".",
+    "pr_merge_commit": "d0f5feeea353c14fdc0476afe3d78fae7f34b30a",
+    "loc_touched": 47,
+    "files_touched": [
+      "prompt_toolkit/input/win32.py"
+    ],
+    "linked_issue_numbers": [],
+    "task_id": "T12",
+    "assignment": "training"
+  },
+  {
+    "task_source": "pr",
+    "pr_number": 2035,
+    "pr_title": "Fix typing issues in __init__.py",
+    "pr_url": "https://github.com/prompt-toolkit/python-prompt-toolkit/pull/2035",
+    "pr_body": "",
+    "pr_merge_commit": "8dad396312d7c7f62216500251dbb5d9ed4f787e",
+    "loc_touched": 6,
+    "files_touched": [
+      "src/prompt_toolkit/__init__.py"
+    ],
+    "linked_issue_numbers": [],
+    "task_id": "T13",
+    "assignment": "training"
+  },
+  {
+    "task_source": "pr",
+    "pr_number": 1351,
+    "pr_title": "Progress bar fixes",
+    "pr_url": "https://github.com/prompt-toolkit/python-prompt-toolkit/pull/1351",
+    "pr_body": "",
+    "pr_merge_commit": "2c9426b1a09e275b424fd2fb5bb80d28fa577867",
+    "loc_touched": 44,
+    "files_touched": [
+      "prompt_toolkit/application/application.py",
+      "prompt_toolkit/eventloop/dummy_contextvars.py",
+      "prompt_toolkit/shortcuts/progress_bar/base.py"
+    ],
+    "linked_issue_numbers": [],
+    "task_id": "T14",
+    "assignment": "training"
+  },
+  {
+    "task_source": "pr",
+    "pr_number": 1685,
+    "pr_title": "Fix control-c key binding for progressbar when created in other thread + cancel_callback.",
+    "pr_url": "https://github.com/prompt-toolkit/python-prompt-toolkit/pull/1685",
+    "pr_body": "\r\n    If the ProgressBar was created in a thread that is not the main thread, the\r\n    control-c key binding should not do anything. It was killing the wrong thread.\r\n\r\n    On top of this, accept a `cancel_callback` that will be called when control-c\r\n    is pressed. This can be used to start cancellation of the code that the\r\n    progress bar is wrapping.",
+    "pr_merge_commit": "b76fa59a3be406c1e453adef4744d7954e201aa0",
+    "loc_touched": 50,
+    "files_touched": [
+      "src/prompt_toolkit/contrib/ssh/server.py",
+      "src/prompt_toolkit/layout/utils.py",
+      "src/prompt_toolkit/shortcuts/progress_bar/base.py"
+    ],
+    "linked_issue_numbers": [],
+    "task_id": "T15",
+    "assignment": "training"
+  }
+]

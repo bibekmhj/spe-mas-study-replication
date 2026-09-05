@@ -31,7 +31,9 @@ def main():
     print(f"Wrote {N_TASKS} tasks to task_list.json")
     print(f"  training: {N_TASKS - N_HOLDOUT}; holdout: {N_HOLDOUT}")
     for t in drawn:
-        print(f"  {t['task_id']} ({t['assignment']}): #{t['issue_number']} {t['issue_title'][:50]}")
+        label = t.get('pr_number') or t.get('issue_number', '?')
+        title = t.get('pr_title') or t.get('issue_title', '')
+        print(f"  {t['task_id']} ({t['assignment']}): #{label} {title[:50]}")
 
 if __name__ == "__main__":
     main()
