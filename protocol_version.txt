@@ -1,0 +1,20 @@
+Protocol v2, 2026-09-04
+
+Change from v1: switched from issue-first to PR-first candidate enumeration.
+Reason: issue-to-PR linking in the target repository is inconsistent (v1
+yielded 0-4 candidates from 76 bug-labeled issues due to unlinked or
+squashed fix PRs). PR-first selection uses merged PRs whose titles match
+bug-fix language and whose diffs are 3-300 LOC across at most 4 files,
+with the same rendering/layout/key-binding exclusion filter.
+Candidate pool size at protocol v2: 64 candidates from 774 closed PRs.
+
+Frozen commit: see frozen_commit.txt
+Cutoff date: 2027-01-01 (all history)
+Bug-title patterns: fix, bug, resolve, correct, repair, patch, issue,
+regression, broken, crash, error, fail
+Excluded paths: prompt_toolkit/renderer.py, prompt_toolkit/layout/,
+prompt_toolkit/key_binding/, plus docs/tests/examples/config
+Size filters: 3 <= LOC <= 300, files <= 4
+
+Task-draw seed: 42 (in draw_tasks.py)
+Holdout-split seed: 137 (in draw_tasks.py)
