@@ -57,3 +57,39 @@ contributor to pallets/click. The random-draw and impl-exclude filters
 remain as methodological safeguards independent of prior contribution.
 
 Frozen commit for candidate enumeration: see frozen_commit.txt.
+
+Protocol v7, 2026-09-05
+
+Pilot completed 2026-09-05 with four runs (T01 SA, T01 MA, T04 SA, T04 MA)
+on pallets/click. Results:
+- T01 SA rep1: pass, 17 iters, 886s, in=70380 out=2432
+- T01 MA rep1: pass, 9 iters, 3816s, in=33934 out=9115
+- T04 SA rep1: pass, 16 iters, 899s, in=67006 out=2498
+- T04 MA rep1: fail_iteration_cap, 12 iters (Coder cap hit), 312s,
+  in=109286 out=3501
+Total pilot cost approximately 1.30 USD.
+
+Changes locked in this version:
+1. Model tier: claude-sonnet-5 confirmed for full study.
+2. Sampling parameters: not user-configurable for this model version;
+   temperature and top_p are deprecated. Determinism characterized via K
+   repetitions.
+3. MA Coder iteration cap raised from 12 to 25 (matching SA), based on
+   T04 MA hitting the previous cap in codebase exploration before proposing
+   an edit. Fair-comparison alignment with SA.
+4. MA harness message-accumulation fix: Coder now maintains a persistent
+   message history across its iterations, and four operator-feedback
+   channels (o/a/t/d/x) are exposed. Two aborted pre-fix pilot runs
+   documented as harness-development artifacts, excluded from study data.
+5. Pytest invocation standardized: PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 and
+   python -m pytest, to isolate from system-installed pytest plugins.
+6. Full-suite regression check will report False on all runs due to a
+   pre-existing PytestRemovedIn10Warning collection error in
+   tests/test_basic.py on the frozen commit; unrelated to any agent's
+   diff, verified on clean parent commit. Noted in run logs and
+   known_environment_issues.md.
+
+Manuscript Sections 1, 3, 6, 7 updated 2026-09-05 to reflect the click
+target repository, the pilot findings, and the sampling-parameter
+constraint. Sections 4, 5 and Abstract remain placeholder pending
+full-run data.

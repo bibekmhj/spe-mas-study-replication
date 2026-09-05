@@ -8,6 +8,12 @@ tree so they serve as the correctness oracle.
 Four agents: Planner, Coder, Reviewer, Tester. Human checkpoints after
 Planner and before commit.
 
+FIX (2026-09-05): the Coder loop now accumulates a proper message history
+so the Coder can see its own past proposals AND the operator's feedback
+on diagnostic commands, edits, and test runs. Previous version made each
+Coder iteration a stateless single-message call, which caused the Coder
+to loop on the same diagnostic command without ever seeing its output.
+
 Multi-line operator input: paste any number of lines, then a line
 containing only END, then enter.
 """
@@ -15,6 +21,7 @@ import argparse
 import json
 import os
 import subprocess
+import sys
 import time
 from datetime import datetime, timezone
 from pathlib import Path
@@ -23,7 +30,7 @@ from anthropic import Anthropic
 
 MODEL = "claude-sonnet-5"
 MAX_TOKENS = 4096
-MAX_CODER_ITERATIONS = 12
+MAX_CODER_ITERATIONS = 25
 
 PLANNER_PROMPT = """You are the Planner in a multi-agent bug-fixing team.
 Read the task description and repository summary. Produce a concise plan
@@ -34,9 +41,16 @@ with:
 Do not write code. Do not modify files. Output only the plan."""
 
 CODER_PROMPT = """You are the Coder in a multi-agent bug-fixing team.
-Execute the Plan provided by the Planner. Make edits to the repository.
-Run pytest after each meaningful change. Stop when tests pass or when
-you cannot proceed. Do NOT modify test files."""
+You are working turn by turn with a human operator who will apply your
+proposed edits and paste back the output of any diagnostic commands you
+request. Each of your messages should propose ONE of:
+- a diagnostic shell command (grep, cat, sed -n, ls, git diff) whose output the operator will paste back
+- an edit to a file (paste the full new content of a small section, or a sed/patch command; the operator will apply it and confirm)
+- a request to run the test suite (say "please run tests" and the operator will paste pytest output back)
+- the word DONE on its own line when you believe the bug is fixed and tests should pass
+Do NOT modify test files. Do NOT propose more than one action per turn.
+When the operator gives you output, use it; do not re-request the same
+diagnostic. If you cannot make progress, say so explicitly and stop."""
 
 REVIEWER_PROMPT = """You are the Reviewer in a multi-agent bug-fixing team.
 The Coder has produced a diff. Given the Plan, the diff, and the test
@@ -152,11 +166,13 @@ def prepare_task(repo_path, task, parent_commit):
 
 
 def run_pytest_on(repo_path, targets):
-    args = ["pytest", "-x", "-q"]
+    args = [sys.executable, "-m", "pytest", "-x", "-q"]
     if targets:
         args += targets
+    env = {**os.environ, "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1"}
     r = subprocess.run(
-        args, cwd=repo_path, capture_output=True, text=True, timeout=600,
+        args, cwd=repo_path, capture_output=True, text=True,
+        timeout=600, env=env,
     )
     return r.returncode == 0, r.stdout + r.stderr
 
@@ -173,7 +189,8 @@ def run_ruff(repo_path, changed_files):
 
 def git_diff(repo_path):
     r = subprocess.run(
-        ["git", "diff"], cwd=repo_path, capture_output=True, text=True, timeout=30,
+        ["git", "diff"], cwd=repo_path, capture_output=True, text=True,
+        timeout=30,
     )
     return r.stdout
 
@@ -186,14 +203,35 @@ def get_git_changed_files(repo_path):
     return [line.strip() for line in r.stdout.splitlines() if line.strip()]
 
 
-def call(client, system, user):
+def extract_text_and_thinking(response):
+    """Return (text, thinking_text) from an Anthropic response."""
+    text = next((b.text for b in response.content if hasattr(b, "text")), "")
+    thinking = "\n".join(
+        getattr(b, "thinking", "") for b in response.content
+        if not hasattr(b, "text")
+    )
+    return text, thinking
+
+
+def call_single(client, system, user):
+    """One-shot call, no history. Used for Planner, Reviewer, Tester."""
     r = client.messages.create(
         model=MODEL, system=system,
         messages=[{"role": "user", "content": user}],
         max_tokens=MAX_TOKENS,
     )
-    text = next((b.text for b in r.content if hasattr(b, "text")), "")
+    text, _ = extract_text_and_thinking(r)
     return text, r.usage.input_tokens, r.usage.output_tokens
+
+
+def call_with_history(client, system, messages):
+    """Multi-turn call preserving history. Used for Coder."""
+    r = client.messages.create(
+        model=MODEL, system=system,
+        messages=messages, max_tokens=MAX_TOKENS,
+    )
+    text, thinking = extract_text_and_thinking(r)
+    return text, thinking, r.usage.input_tokens, r.usage.output_tokens
 
 
 # ---------- Main ----------
@@ -229,9 +267,10 @@ def main():
         baseline_pass, baseline_out = run_pytest_on(args.repo, test_files)
     else:
         baseline_pass, baseline_out = None, "no oracle test files identified"
-    log(run_dir, "baseline_test_run",
-        {"oracle_pass": baseline_pass,
-         "output": baseline_out[-2000:] if isinstance(baseline_out, str) else ""})
+    log(run_dir, "baseline_test_run", {
+        "oracle_pass": baseline_pass,
+        "output": baseline_out[-2000:] if isinstance(baseline_out, str) else "",
+    })
 
     print(f"\n=== TASK {args.task_id} SETUP ===")
     print(f"parent_commit: {parent_commit}")
@@ -245,10 +284,11 @@ def main():
             "Continue anyway? (y/N): "
         ).strip().lower()
         if proceed != "y":
-            log(run_dir, "summary",
-                {"outcome": "skipped_no_reproducible_bug",
-                 "iterations": 0, "wall_clock_s": 0,
-                 "tokens_in": 0, "tokens_out": 0})
+            log(run_dir, "summary", {
+                "outcome": "skipped_no_reproducible_bug",
+                "iterations": 0, "wall_clock_s": 0,
+                "tokens_in": 0, "tokens_out": 0,
+            })
             print("Skipped.")
             return
 
@@ -266,7 +306,7 @@ def main():
         f"Note: test files describing expected behavior are already present "
         f"in the working tree. Do NOT modify them."
     )
-    plan, ti, to = call(client, PLANNER_PROMPT, task_prompt)
+    plan, ti, to = call_single(client, PLANNER_PROMPT, task_prompt)
     tokens_in_total += ti; tokens_out_total += to
     iterations += 1
     (run_dir / "plan.md").write_text(plan)
@@ -282,7 +322,7 @@ def main():
         outcome = "abort_post_plan"
     elif decision == "r":
         note = read_multiline("What should be revised?")
-        plan_v2, ti, to = call(
+        plan_v2, ti, to = call_single(
             client, PLANNER_PROMPT,
             task_prompt + f"\n\nRevision request: {note}\nPrior plan:\n{plan}",
         )
@@ -291,36 +331,100 @@ def main():
         (run_dir / "plan_v2.md").write_text(plan_v2)
         plan = plan_v2
 
-    # --- CODER ---
+    # --- CODER (accumulating message history) ---
     if outcome == "unknown":
+        initial_diff = git_diff(args.repo) or "(no changes yet)"
+        initial_test_pass, initial_test_out = run_pytest_on(
+            args.repo, test_files
+        )
+        coder_messages = [{
+            "role": "user",
+            "content": (
+                f"Plan from the Planner:\n{plan}\n\n"
+                f"Repository is at {args.repo}. Current diff so far:\n"
+                f"{initial_diff}\n\n"
+                f"Current oracle test result: "
+                f"{'PASS' if initial_test_pass else 'FAIL'}\n"
+                f"Last test output (truncated):\n"
+                f"{initial_test_out[-1200:]}\n\n"
+                f"Begin executing the plan. Propose ONE action per turn: "
+                f"a diagnostic command, a file edit, a request to run tests, "
+                f"or DONE."
+            ),
+        }]
+
         coder_iter = 0
         while coder_iter < MAX_CODER_ITERATIONS:
             coder_iter += 1
-            current_diff = git_diff(args.repo) or "(no changes yet)"
-            passed, test_output = run_pytest_on(args.repo, test_files)
-            coder_input = (
-                f"Plan:\n{plan}\n\nCurrent diff so far:\n{current_diff}\n\n"
-                f"Latest test output:\n{test_output[-1500:]}\n\n"
-                f"Continue executing the plan. Propose edits as shell "
-                f"commands (sed, cat > file, patch) or paste full-file "
-                f"replacements. Say DONE when you believe tests pass."
+            coder_out, thinking, ti, to = call_with_history(
+                client, CODER_PROMPT, coder_messages
             )
-            coder_out, ti, to = call(client, CODER_PROMPT, coder_input)
             tokens_in_total += ti; tokens_out_total += to
             iterations += 1
-            log(run_dir, "coder_iteration",
-                {"iter": coder_iter, "text": coder_out,
-                 "tokens_in": ti, "tokens_out": to})
+            coder_messages.append({"role": "assistant", "content": coder_out})
+            log(run_dir, "coder_iteration", {
+                "iter": coder_iter, "text": coder_out,
+                "tokens_in": ti, "tokens_out": to,
+            })
+            if thinking:
+                log(run_dir, "coder_thinking",
+                    {"iter": coder_iter, "text": thinking})
             print(f"\n--- Coder iter {coder_iter} ---\n{coder_out}\n")
 
+            if "DONE" in coder_out.split()[-5:] if coder_out.split() else False:
+                break
+
             action = input(
-                "Apply proposal to repo, then (c)ontinue / (d)one / "
-                "(x) abort: "
+                "\nAction: (o) command-output feedback, (a) applied-edit "
+                "feedback, (t) run tests, (d) done, (x) abort: "
             ).strip().lower()
+            log(run_dir, "human_intervention",
+                {"iter": coder_iter, "action": action})
+
             if action == "x":
                 outcome = "abort_coder"; break
-            if action == "d" or "DONE" in coder_out:
+            if action == "d":
                 break
+            if action == "o":
+                out = read_multiline(
+                    "Paste the output of the command Coder requested:"
+                )
+                coder_messages.append({
+                    "role": "user",
+                    "content": f"Command output:\n{out}",
+                })
+                continue
+            if action == "a":
+                result = read_multiline(
+                    "Paste the result of applying the edit "
+                    "(e.g., 'applied cleanly', diff summary, or error):"
+                )
+                new_diff = git_diff(args.repo)
+                coder_messages.append({
+                    "role": "user",
+                    "content": (
+                        f"Edit applied. Operator note: {result}\n\n"
+                        f"Current git diff:\n{new_diff[-1500:]}"
+                    ),
+                })
+                continue
+            if action == "t":
+                passed, test_output = run_pytest_on(args.repo, test_files)
+                coder_messages.append({
+                    "role": "user",
+                    "content": (
+                        f"Oracle test run: "
+                        f"{'PASS' if passed else 'FAIL'}\n"
+                        f"Output:\n{test_output[-1500:]}"
+                    ),
+                })
+                continue
+            # Unknown action; ask again on next iter without progressing
+            coder_messages.append({
+                "role": "user",
+                "content": "Please continue.",
+            })
+
         if coder_iter >= MAX_CODER_ITERATIONS and outcome == "unknown":
             outcome = "fail_iteration_cap"
 
@@ -332,7 +436,7 @@ def main():
             f"Plan:\n{plan}\n\nFinal diff:\n{final_diff}\n\n"
             f"Oracle test output:\n{test_output[-1500:]}"
         )
-        review, ti, to = call(client, REVIEWER_PROMPT, review_input)
+        review, ti, to = call_single(client, REVIEWER_PROMPT, review_input)
         tokens_in_total += ti; tokens_out_total += to
         iterations += 1
         (run_dir / "review_notes.md").write_text(review)
@@ -343,7 +447,7 @@ def main():
             f"Oracle test output:\n{test_output[-1500:]}\n\n"
             f"Reviewer notes:\n{review}"
         )
-        tester_out, ti, to = call(client, TESTER_PROMPT, tester_input)
+        tester_out, ti, to = call_single(client, TESTER_PROMPT, tester_input)
         tokens_in_total += ti; tokens_out_total += to
         iterations += 1
         (run_dir / "test_rationale.md").write_text(tester_out)
