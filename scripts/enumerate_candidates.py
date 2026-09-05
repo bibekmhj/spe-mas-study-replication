@@ -1,12 +1,14 @@
-"""Enumerate candidate bug-fix tasks for the study task set.
+"""Enumerate candidate bug-fix tasks for the study task set (Protocol v6).
 
-PR-first selection: enumerate merged PRs directly, filter for bug-fix titles
-and small-diff shape, apply the exclusion filters. The PR is the ground truth
-for the fix (a concrete diff plus tests). Linked issues are captured when
-available but are not required.
+Target repository: pallets/click
+Changes from v5: target repository changed from prompt-toolkit/python-prompt-toolkit
+to pallets/click for better test-discipline in bug-fix PRs. IMPL_EXCLUDE_PATTERNS
+retargeted to click's platform-specific and shell-completion modules.
 
-This replaces the earlier issue-first approach, which was blocked by
-inconsistent issue-to-PR linking in the target repository.
+Selection: merged PRs whose title matches bug-fix language, whose diff is
+3-300 LOC across at most 4 files, excluding platform/shell-completion
+implementation files, requiring at least one test file to be present in the
+diff so the run-time correctness oracle exists.
 """
 import json
 import os
@@ -16,45 +18,49 @@ from pathlib import Path
 
 from github import Github, Auth, RateLimitExceededException, GithubException
 
-REPO = "prompt-toolkit/python-prompt-toolkit"
+REPO = "pallets/click"
 CUTOFF_DATE = "2027-01-01"
 BUG_TITLE_PATTERNS = [
-    r"\bfix(?:e[sd])?\b",
-    r"\bbug\b",
-    r"\bresolv(?:e|es|ed)\b",
-    r"\bcorrect(?:s|ed)?\b",
-    r"\brepair\b",
-    r"\bpatch(?:es|ed)?\b",
-    r"\bissue\b",
-    r"\bregression\b",
-    r"\bbroken\b",
-    r"\bcrash\b",
-    r"\berror\b",
-    r"\bfail(?:s|ed|ure)?\b",
+    r"\bfix(?:e[sd])?\b", r"\bbug\b", r"\bresolv(?:e|es|ed)\b",
+    r"\bcorrect(?:s|ed)?\b", r"\brepair\b", r"\bpatch(?:es|ed)?\b",
+    r"\bissue\b", r"\bregression\b", r"\bbroken\b", r"\bcrash\b",
+    r"\berror\b", r"\bfail(?:s|ed|ure)?\b",
 ]
-EXCLUDED_PATH_PATTERNS = [
-    r"^prompt_toolkit/renderer\.py",
-    r"^prompt_toolkit/layout/",
-    r"^prompt_toolkit/key_binding/",
-    r"^docs/",
-    r"^examples/",
-    r"^tests/",
-    r"^CHANGELOG",
-    r"^README",
-    r"\.md$",
-    r"\.rst$",
+# Click-specific implementation exclusions: files whose behavior depends
+# strongly on terminal or shell environment and whose tests are less reliable
+# in a portable execution environment.
+IMPL_EXCLUDE_PATTERNS = [
+    r"(?:^|/)_termui_impl\.py$",
+    r"(?:^|/)_winconsole\.py$",
+    r"(?:^|/)shell_completion\.py$",
+]
+NONCODE_PATTERNS = [
+    r"^docs/", r"^examples/", r"^CHANGELOG", r"^README",
+    r"\.md$", r"\.rst$", r"^\.github/",
 ]
 MAX_LOC = 300
 MAX_FILES = 4
-MIN_LOC = 3   # excludes trivial one-line PRs which are often typo fixes
-ISSUE_REF_PATTERN = re.compile(
-    r"(?:^|\s|[(\[,.])(?:GH-|gh-|#)(\d{1,6})\b"
-)
+MIN_LOC = 3
 BUG_TITLE_RE = re.compile("|".join(BUG_TITLE_PATTERNS), re.IGNORECASE)
 
 
-def is_excluded_path(path):
-    return any(re.search(p, path) for p in EXCLUDED_PATH_PATTERNS)
+def is_impl_excluded(path):
+    return any(re.search(p, path) for p in IMPL_EXCLUDE_PATTERNS)
+
+
+def is_noncode(path):
+    return any(re.search(p, path) for p in NONCODE_PATTERNS)
+
+
+def is_test_file(path):
+    p = Path(path)
+    normalized = path.replace("\\", "/")
+    return (
+        "/tests/" in ("/" + normalized)
+        or normalized.startswith("tests/")
+        or p.name.startswith("test_")
+        or p.name.endswith("_test.py")
+    )
 
 
 def is_bug_fix_title(title):
@@ -75,12 +81,6 @@ def safe_call(fn, retries=3):
     return None
 
 
-def collect_issue_refs(text):
-    if not text:
-        return set()
-    return {int(m) for m in ISSUE_REF_PATTERN.findall(text)}
-
-
 def show_rate_limit(gh):
     try:
         rl = gh.get_rate_limit()
@@ -97,13 +97,14 @@ def main():
     gh = Github(auth=Auth.Token(token))
     repo = gh.get_repo(REPO)
 
-    print("Enumerating all closed PRs (this is the slow phase)...")
+    print(f"Enumerating all closed PRs from {REPO}...")
     pulls = repo.get_pulls(state="closed", sort="created", direction="desc")
 
     candidates = []
     rej = {"not_merged": 0, "not_bug_title": 0, "too_many_files": 0,
            "too_much_loc": 0, "too_little_loc": 0,
-           "excluded_path": 0, "no_code_files": 0, "error": 0}
+           "impl_excluded_path": 0, "no_test_file": 0,
+           "no_code_files": 0, "error": 0}
     seen = 0
 
     for pr in pulls:
@@ -131,18 +132,13 @@ def main():
         file_paths = [f.filename for f in files]
         loc = sum(f.additions + f.deletions for f in files)
 
-        # Exclude PRs whose diff is entirely docs/tests/examples/config
-        code_files = [p for p in file_paths if not is_excluded_path(p)]
+        code_files = [p for p in file_paths if not is_noncode(p)]
         if not code_files:
             rej["no_code_files"] += 1
             continue
-        # If any file is in the excluded-implementation paths, skip
-        # (rendering/layout/key-binding code, per §3.3)
-        if any(re.match(EXCLUDED_PATH_PATTERNS[0], p) or
-               re.match(EXCLUDED_PATH_PATTERNS[1], p) or
-               re.match(EXCLUDED_PATH_PATTERNS[2], p)
-               for p in file_paths):
-            rej["excluded_path"] += 1
+
+        if any(is_impl_excluded(p) for p in file_paths):
+            rej["impl_excluded_path"] += 1
             continue
 
         if len(file_paths) > MAX_FILES:
@@ -155,9 +151,10 @@ def main():
             rej["too_little_loc"] += 1
             continue
 
-        # Best-effort: link back to an issue if the PR body mentions one.
-        linked_issues = list(collect_issue_refs(pr.title) |
-                             collect_issue_refs(pr.body or ""))
+        test_files = [p for p in file_paths if is_test_file(p)]
+        if not test_files:
+            rej["no_test_file"] += 1
+            continue
 
         candidates.append({
             "task_source": "pr",
@@ -168,7 +165,7 @@ def main():
             "pr_merge_commit": pr.merge_commit_sha,
             "loc_touched": loc,
             "files_touched": file_paths,
-            "linked_issue_numbers": linked_issues,
+            "test_files_touched": test_files,
         })
         print(f"  candidate PR #{pr.number}: {pr.title[:60]}")
 

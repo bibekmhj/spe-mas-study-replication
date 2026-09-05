@@ -1,244 +1,283 @@
 [
   {
     "task_source": "pr",
-    "pr_number": 1865,
-    "pr_title": "Fix compatibility when SIGINT handler is installed by non-Python",
-    "pr_url": "https://github.com/prompt-toolkit/python-prompt-toolkit/pull/1865",
-    "pr_body": "When a native (Rust, C) program installs SIGINT handler and calls into Python, `signal.getsignal` can return `None`, which is not a valid value for the 2nd parameter of `signal.signal`. Fix it by checking `None` explicitly.",
-    "pr_merge_commit": "85079ad4d726e64089d9e0efa9faa36a084b7d67",
-    "loc_touched": 3,
+    "pr_number": 3208,
+    "pr_title": "fix help hint showing shadowed option name",
+    "pr_url": "https://github.com/pallets/click/pull/3208",
+    "pr_body": "Fixes #2790.\n\nWhen a subcommand defines an option that shadows one of the configured help option names (e.g. `-h`), the error hint was still suggesting the shadowed name:\n\n```\nTry 'cli foo -h' for help.\n```\n\nBut `-h` is now the subcommand's `--host` option, not help. Running `cli foo -h` gives `Error: Option '-h' requires an argument.` instead of showing help.\n\nThe fix uses `get_help_option_names()` which already exists and filters out names claimed by other parameters. So now the hint picks a working alternative like `--help`:\n\n```\nTry 'cli foo --help' for help.\n```",
+    "pr_merge_commit": "0cd28d6548f92e46396e0ffdd19ec5ea75b4b5e4",
+    "loc_touched": 77,
     "files_touched": [
-      "src/prompt_toolkit/application/application.py"
+      "CHANGES.rst",
+      "src/click/exceptions.py",
+      "tests/test_formatting.py"
     ],
-    "linked_issue_numbers": [],
+    "test_files_touched": [
+      "tests/test_formatting.py"
+    ],
     "task_id": "T01",
     "assignment": "training"
   },
   {
     "task_source": "pr",
-    "pr_number": 2070,
-    "pr_title": "Fix FuzzyWordCompleter meta_dict type hint to match WordCompleter",
-    "pr_url": "https://github.com/prompt-toolkit/python-prompt-toolkit/pull/2070",
-    "pr_body": "Fixes #2039.\r\n\r\n`FuzzyWordCompleter` types `meta_dict` as `dict[str, str] | None` and then forwards it straight into `WordCompleter`, which declares the same parameter as `Mapping[str, AnyFormattedText] | None`. So the wrapper rejects values the wrapped class would happily accept \u2014 passing in something like `{\"alpha\": HTML(\"<b>first</b>\")}` works at runtime but trips the type checker.\r\n\r\nWidened it to match `WordCompleter`. `AnyFormattedText` is already imported in this file, just needed to add `Mapping` from typing. No runtime behavior change.",
-    "pr_merge_commit": "8f3212dd54a256a394e3734927d0f7ab5fc4c108",
-    "loc_touched": 6,
+    "pr_number": 3578,
+    "pr_title": "Fix double-bracketing of choices in synopsis",
+    "pr_url": "https://github.com/pallets/click/pull/3578",
+    "pr_body": "A small rendering issue of choices being enclosed into double-brackets when argument is optional.\r\n\r\nIssue was likely unnoticed in the original https://github.com/pallets/click/issues/1272 / https://github.com/pallets/click/issues/1273 PR.\r\n\r\nThis mirrors the similar fix I implemented for commands in https://github.com/pallets/click/pull/3507",
+    "pr_merge_commit": "09195f6a92972c4e1bbb5493686456e6ba624520",
+    "loc_touched": 49,
     "files_touched": [
-      "src/prompt_toolkit/completion/fuzzy_completer.py",
-      "src/prompt_toolkit/widgets/base.py"
+      "CHANGES.md",
+      "src/click/core.py",
+      "tests/test_basic.py"
     ],
-    "linked_issue_numbers": [
-      2039
+    "test_files_touched": [
+      "tests/test_basic.py"
     ],
     "task_id": "T02",
     "assignment": "holdout"
   },
   {
     "task_source": "pr",
-    "pr_number": 1151,
-    "pr_title": "A few pyflakes fixes: added several imports to __all__.",
-    "pr_url": "https://github.com/prompt-toolkit/python-prompt-toolkit/pull/1151",
-    "pr_body": "",
-    "pr_merge_commit": "5f2268d9232f5d300b4a3226c6e82fe44c60f9ca",
-    "loc_touched": 5,
+    "pr_number": 2417,
+    "pr_title": "Fix parameterless command with custom class",
+    "pr_url": "https://github.com/pallets/click/pull/2417",
+    "pr_body": "<!--\r\nBefore opening a PR, open a ticket describing the issue or feature the\r\nPR will address. Follow the steps in CONTRIBUTING.rst.\r\n\r\nReplace this comment with a description of the change. Describe how it\r\naddresses the linked ticket.\r\n-->\r\n\r\nThis reorders the setting of the `kwargs[\"cls\"]` and `assert (\r\n                len(args) == 1 and not kwargs\r\n            )` to allow parameterless constructors even when `self.command_class` is defined.\r\n\r\n<!--\r\nLink to relevant issues or previous PRs, one per line. Use \"fixes\" to\r\nautomatically close an issue.\r\n-->\r\n\r\n- fixes #2416 \r\n\r\n<!--\r\nEnsure each step in CONTRIBUTING.rst is complete by adding an \"x\" to\r\neach box below.\r\n\r\nIf only docs were changed, these aren't relevant and can be removed.\r\n-->\r\n\r\nChecklist:\r\n\r\n- [x] Add tests that demonstrate the correct behavior of the change. Tests should fail without the change.\r\n- [x] Add or update relevant docs, in the docs folder and in code.\r\n- [x] Add an entry in `CHANGES.rst` summarizing the change and linking to the issue.\r\n- [x] Add `.. versionchanged::` entries in any relevant code docs.\r\n- [x] Run `pre-commit` hooks and fix any issues.\r\n- [x] Run `pytest` and `tox`, no tests failed.\r\n",
+    "pr_merge_commit": "6ae94287ef5aac3b0dc7c37706548f32e5994d3b",
+    "loc_touched": 28,
     "files_touched": [
-      "prompt_toolkit/contrib/completers/__init__.py",
-      "prompt_toolkit/contrib/regular_languages/__init__.py",
-      "prompt_toolkit/shortcuts/__init__.py"
+      "CHANGES.rst",
+      "src/click/core.py",
+      "tests/test_command_decorators.py"
     ],
-    "linked_issue_numbers": [],
+    "test_files_touched": [
+      "tests/test_command_decorators.py"
+    ],
     "task_id": "T03",
     "assignment": "holdout"
   },
   {
     "task_source": "pr",
-    "pr_number": 1827,
-    "pr_title": "Fix line wrapping in `patch_stdout` on Windows.",
-    "pr_url": "https://github.com/prompt-toolkit/python-prompt-toolkit/pull/1827",
-    "pr_body": "Enable autowrap before writing data to the output in `patch_stdout`. We enable/disable VT terminal processing during every `flush()` of the Windows Output implementation, but it turns out that this causes the autowrap flag to be reset each time. Because of this, we have to enable autowrap each time before writing.",
-    "pr_merge_commit": "55cde3eb0e1be72d9232e979a708f1a792339ad9",
-    "loc_touched": 13,
+    "pr_number": 2680,
+    "pr_title": "Fix closing of callbacks on CLI exit",
+    "pr_url": "https://github.com/pallets/click/pull/2680",
+    "pr_body": "This PR forces the context to close itself on CLI exits.\r\n\r\nThis makes sure all callbacks registered by invoked options are properly called whenever a `ctx.exit()` action is triggered. Which has the effect of preventing state leaks.\r\n\r\nThese leaks cannot be witness in standard CLI operations, because on `ctx.exit()` call, the OS process that is running the Python CLI will be destroyed.\r\n\r\nStill, in unittests, these state leaks will leads to flaky and non-deterministic tests, as the `pytest`, `tox` or any other test framework will keep using the same Python interpreter. To demonstrate this, I implemented a unit test using loggers as a fixture, in addition to a generic unit test.\r\n\r\nChecklist:\r\n\r\n- [x] Add tests that demonstrate the correct behavior of the change. Tests should fail without the change.\r\n- [x] Add or update relevant docs, in the docs folder and in code.\r\n- [x] Add an entry in `CHANGES.rst` summarizing the change and linking to the issue.\r\n- [x] Add `.. versionchanged::` entries in any relevant code docs.\r\n- [x] Run `pre-commit` hooks and fix any issues.\r\n- [x] Run `pytest` and `tox`, no tests failed.\r\n",
+    "pr_merge_commit": "c326df95e9e3da0425360e030413f6a3ee25fdee",
+    "loc_touched": 186,
     "files_touched": [
-      "src/prompt_toolkit/application/application.py",
-      "src/prompt_toolkit/eventloop/inputhook.py",
-      "src/prompt_toolkit/patch_stdout.py"
+      "CHANGES.rst",
+      "docs/advanced.rst",
+      "src/click/core.py",
+      "tests/test_context.py"
     ],
-    "linked_issue_numbers": [],
+    "test_files_touched": [
+      "tests/test_context.py"
+    ],
     "task_id": "T04",
     "assignment": "training"
   },
   {
     "task_source": "pr",
-    "pr_number": 1836,
-    "pr_title": "fix memory leak for prompt_toolkit.filters.base.Never/Always and inline condition filter",
-    "pr_url": "https://github.com/prompt-toolkit/python-prompt-toolkit/pull/1836",
-    "pr_body": "Reference: https://github.com/prompt-toolkit/python-prompt-toolkit/issues/1835\r\n`Never/Always` is cached in `prompt_toolkit.filters.utils._bool_to_filter`, and if it is the first condition, it will hold the filter and cannot be freed.\r\n\r\nThe inline condition filter will have a different ID after the parent function is called (a new PromptSession is created). It will be cached by some global condition filter (e.g., is_searching), causing the cached size to increase and never be freed.",
-    "pr_merge_commit": "465ab02854763fafc0099a2e38a56328c1cb0625",
-    "loc_touched": 91,
+    "pr_number": 2728,
+    "pr_title": "Prevent multiline error message on invalid path",
+    "pr_url": "https://github.com/pallets/click/pull/2728",
+    "pr_body": "Fixes an issue where an invalid `click.Path` parameter, which contains a `\\n`, will result in an error that prints out on multiple lines.\r\n\r\nfixes #2697\r\n",
+    "pr_merge_commit": "c021f05c838c1d0401ebc340d1de9b663c7fb578",
+    "loc_touched": 17,
     "files_touched": [
-      "src/prompt_toolkit/filters/base.py",
-      "src/prompt_toolkit/key_binding/bindings/basic.py",
-      "src/prompt_toolkit/key_binding/bindings/emacs.py",
-      "src/prompt_toolkit/key_binding/bindings/vi.py"
+      "CHANGES.rst",
+      "src/click/types.py",
+      "tests/test_types.py"
     ],
-    "linked_issue_numbers": [],
+    "test_files_touched": [
+      "tests/test_types.py"
+    ],
     "task_id": "T05",
     "assignment": "training"
   },
   {
     "task_source": "pr",
-    "pr_number": 4,
-    "pr_title": "Fix C-w and C-u in the insert mode.",
-    "pr_url": "https://github.com/prompt-toolkit/python-prompt-toolkit/pull/4",
-    "pr_body": "",
-    "pr_merge_commit": "18cbb523d51658a9451e53d4b84c60145c054da5",
-    "loc_touched": 10,
+    "pr_number": 3079,
+    "pr_title": "Fix default handling to defer `UNSET` normalization",
+    "pr_url": "https://github.com/pallets/click/pull/3079",
+    "pr_body": "When options are being parsed, multiple options may evaluate to have defaults of `UNSET`, and some may evaluate to have explicitly set defaults of `None`. The normalization of `UNSET -> None` is now deferred until all options have been parsed, so that it is possible to accurately evaluate and save the first non-UNSET default value.\r\n\r\nA new test exercises this functionality by pointing two flags at the same parameter declaration, and showing that their behavior is not order sensitive when only one of the flags has a default.\r\n\r\nresolves #3071\r\n\r\n---\r\n\r\nThe PR template says to add a note in `CHANGES.rst` for the change, but there's no header for the next release, so I wasn't sure where to put a change note. If a maintainer gives me a pointer in terms of what to do, I'm happy to amend with a change note. :slightly_smiling_face: ",
+    "pr_merge_commit": "27aaed3fe5bcd6adedd6e91de234914af9859cf1",
+    "loc_touched": 48,
     "files_touched": [
-      "prompt_toolkit/key_bindings/basic.py"
+      "CHANGES.rst",
+      "src/click/core.py",
+      "tests/test_defaults.py"
     ],
-    "linked_issue_numbers": [],
+    "test_files_touched": [
+      "tests/test_defaults.py"
+    ],
     "task_id": "T06",
     "assignment": "holdout"
   },
   {
     "task_source": "pr",
-    "pr_number": 2027,
-    "pr_title": "Small typing fixes.",
-    "pr_url": "https://github.com/prompt-toolkit/python-prompt-toolkit/pull/2027",
-    "pr_body": "",
-    "pr_merge_commit": "8566f9b8c4b64364916f16163cd5738e78922ea5",
-    "loc_touched": 7,
+    "pr_number": 3211,
+    "pr_title": "`FuncParamType` should use `ValueError` message in `self.fail()`",
+    "pr_url": "https://github.com/pallets/click/pull/3211",
+    "pr_body": "Fixes #3105\r\n\r\nWhen FuncParamType.convert() caught a ValueError, it discarded the exception message and only passed the input value to self.fail(). This meant users lost context about why the conversion failed.\r\n\r\nThis fix captures and uses the ValueError message, providing better error feedback to users. Falls back to the input value only if the message is empty (backward compatibility).\r\n\r\nIncludes regression test ensuring the message is surfaced in the BadParameter exception.",
+    "pr_merge_commit": "fc6c7c47edd6110b6bd5a1a5297b2035214b0cd1",
+    "loc_touched": 36,
     "files_touched": [
-      "src/prompt_toolkit/formatted_text/base.py",
-      "src/prompt_toolkit/lexers/pygments.py"
+      "CHANGES.rst",
+      "src/click/types.py",
+      "tests/test_types.py"
     ],
-    "linked_issue_numbers": [],
+    "test_files_touched": [
+      "tests/test_types.py"
+    ],
     "task_id": "T07",
     "assignment": "holdout"
   },
   {
     "task_source": "pr",
-    "pr_number": 705,
-    "pr_title": "Fixed PosixPipeInput import/name",
-    "pr_url": "https://github.com/prompt-toolkit/python-prompt-toolkit/pull/705",
-    "pr_body": "related to: 31906ded50fffe71e6855d7ebd8c8f79a591593d and dc7b91be3ca8f106b2225db9ef986ef937f85405\r\n\r\nI also fixed a typo.",
-    "pr_merge_commit": "fc4d8a0f21077d25285779ed3abe750ea7ae2d28",
-    "loc_touched": 6,
+    "pr_number": 806,
+    "pr_title": "Fix overzealous completion when required options/arguments are being completed",
+    "pr_url": "https://github.com/pallets/click/pull/806",
+    "pr_body": "Don't offer bash completions for subcommands or chained commands when completing a required argument or option.\r\nFixes #790",
+    "pr_merge_commit": "5210849f8fd0678998723014c711c93af6edd5ce",
+    "loc_touched": 154,
     "files_touched": [
-      "prompt_toolkit/contrib/telnet/server.py",
-      "prompt_toolkit/input/defaults.py"
+      "CHANGES",
+      "click/_bashcomplete.py",
+      "examples/bashcompletion/bashcompletion.py",
+      "tests/test_bashcomplete.py"
     ],
-    "linked_issue_numbers": [],
+    "test_files_touched": [
+      "tests/test_bashcomplete.py"
+    ],
     "task_id": "T08",
     "assignment": "training"
   },
   {
     "task_source": "pr",
-    "pr_number": 2034,
-    "pr_title": "Fix nested completer which got broken in previous 'get_word_before_cursor' fix",
-    "pr_url": "https://github.com/prompt-toolkit/python-prompt-toolkit/pull/2034",
-    "pr_body": "Fix bug introduced in https://github.com/prompt-toolkit/python-prompt-toolkit/pull/2025",
-    "pr_merge_commit": "2aec8202cda4d1b9d62e6cae0c667790ea371d7d",
-    "loc_touched": 15,
+    "pr_number": 3238,
+    "pr_title": "Fix pager test leaks",
+    "pr_url": "https://github.com/pallets/click/pull/3238",
+    "pr_body": "This PR fix an issue with the `test_echo_via_pager` test, which is polluting other tests and is leaky.\r\n\r\nThis issue was uncovered while playing with parallels and random tests in https://github.com/pallets/click/pull/3151#issuecomment-3976773942 .",
+    "pr_merge_commit": "5df10013f7ed8bad94da1e82d58e3711eec1afb3",
+    "loc_touched": 7,
     "files_touched": [
-      "src/prompt_toolkit/document.py",
-      "src/prompt_toolkit/shortcuts/dialogs.py",
-      "tests/test_document.py"
+      "tests/test_utils.py"
     ],
-    "linked_issue_numbers": [],
+    "test_files_touched": [
+      "tests/test_utils.py"
+    ],
     "task_id": "T09",
     "assignment": "training"
   },
   {
     "task_source": "pr",
-    "pr_number": 1262,
-    "pr_title": "Fix: Typo and whitespace",
-    "pr_url": "https://github.com/prompt-toolkit/python-prompt-toolkit/pull/1262",
-    "pr_body": "Needed whitespace for the docstring to render correctly after running\r\nthe project through sphinx. As it stands, the current `-` renders on the\r\nsame line as the previous one instead of starting a unordered list.\r\n\r\nAlso fix a misspelling.",
-    "pr_merge_commit": "133eaf25ecec2acf63015e0d9ca3b2fe6836e4ea",
-    "loc_touched": 3,
+    "pr_number": 1566,
+    "pr_title": "fix propagation of show_default option to sub-commands",
+    "pr_url": "https://github.com/pallets/click/pull/1566",
+    "pr_body": "Fixes #1565.",
+    "pr_merge_commit": "4ae204e835d2d45875704c6796ec4f4aecb4b909",
+    "loc_touched": 60,
     "files_touched": [
-      "prompt_toolkit/application/application.py"
+      "CHANGES.rst",
+      "src/click/core.py",
+      "tests/test_context.py"
     ],
-    "linked_issue_numbers": [],
+    "test_files_touched": [
+      "tests/test_context.py"
+    ],
     "task_id": "T10",
     "assignment": "training"
   },
   {
     "task_source": "pr",
-    "pr_number": 888,
-    "pr_title": "Fix docstring for output.base.Output",
-    "pr_url": "https://github.com/prompt-toolkit/python-prompt-toolkit/pull/888",
-    "pr_body": "",
-    "pr_merge_commit": "eee625be858316fff0a0dc032bf5843fa17a54bd",
-    "loc_touched": 4,
+    "pr_number": 3526,
+    "pr_title": "Accept ZFS error-message for non-UTF-8 names",
+    "pr_url": "https://github.com/pallets/click/pull/3526",
+    "pr_body": "This PR update the list of file-system specific error messages for a test that is supposed to fail for non-UTF8 filesystem.\r\n\r\nCloses: #2634.\r\n\r\nRelates to: \r\n- #2945\r\n- #2946\r\n\r\nCC @ruro",
+    "pr_merge_commit": "567d7e9220d6d6f52104ddbccd333d3f0c5b2d41",
+    "loc_touched": 21,
     "files_touched": [
-      "prompt_toolkit/output/base.py"
+      "tests/test_types.py"
     ],
-    "linked_issue_numbers": [],
+    "test_files_touched": [
+      "tests/test_types.py"
+    ],
     "task_id": "T11",
     "assignment": "training"
   },
   {
     "task_source": "pr",
-    "pr_number": 1482,
-    "pr_title": "Unicode windows fix",
-    "pr_url": "https://github.com/prompt-toolkit/python-prompt-toolkit/pull/1482",
-    "pr_body": "Same as https://github.com/prompt-toolkit/python-prompt-toolkit/pull/1478\r\nBut squashed and applied \"black\".",
-    "pr_merge_commit": "d0f5feeea353c14fdc0476afe3d78fae7f34b30a",
-    "loc_touched": 47,
+    "pr_number": 240,
+    "pr_title": "Fix usage wrapping on narrow terminals",
+    "pr_url": "https://github.com/pallets/click/pull/240",
+    "pr_body": "@mitsuhiko Fixes #231.\n\nI'm not entirely comfortable with this fix, but short of rewriting TextWrapper to not include the `subsequent_indent` in the wrapped-text width, I don't know what else can be done.\n",
+    "pr_merge_commit": "efefa78c6a21592048a0a53aed7ae217e3c5b1dc",
+    "loc_touched": 55,
     "files_touched": [
-      "prompt_toolkit/input/win32.py"
+      "click/formatting.py",
+      "tests/test_formatting.py"
     ],
-    "linked_issue_numbers": [],
+    "test_files_touched": [
+      "tests/test_formatting.py"
+    ],
     "task_id": "T12",
     "assignment": "training"
   },
   {
     "task_source": "pr",
-    "pr_number": 2035,
-    "pr_title": "Fix typing issues in __init__.py",
-    "pr_url": "https://github.com/prompt-toolkit/python-prompt-toolkit/pull/2035",
-    "pr_body": "",
-    "pr_merge_commit": "8dad396312d7c7f62216500251dbb5d9ed4f787e",
-    "loc_touched": 6,
+    "pr_number": 778,
+    "pr_title": "Backport fixes for autocompletion on chained commands",
+    "pr_url": "https://github.com/pallets/click/pull/778",
+    "pr_body": "Backports #774 to 6.x maintenance branch.\r\n",
+    "pr_merge_commit": "2ab5f7ebe12ee7276a25605af67227e5ffa59dd5",
+    "loc_touched": 48,
     "files_touched": [
-      "src/prompt_toolkit/__init__.py"
+      "CHANGES",
+      "click/_bashcomplete.py",
+      "tests/test_bashcomplete.py"
     ],
-    "linked_issue_numbers": [],
+    "test_files_touched": [
+      "tests/test_bashcomplete.py"
+    ],
     "task_id": "T13",
     "assignment": "training"
   },
   {
     "task_source": "pr",
-    "pr_number": 1351,
-    "pr_title": "Progress bar fixes",
-    "pr_url": "https://github.com/prompt-toolkit/python-prompt-toolkit/pull/1351",
-    "pr_body": "",
-    "pr_merge_commit": "2c9426b1a09e275b424fd2fb5bb80d28fa577867",
-    "loc_touched": 44,
+    "pr_number": 2729,
+    "pr_title": "fix color handling in test runner",
+    "pr_url": "https://github.com/pallets/click/pull/2729",
+    "pr_body": "When using `CliRunner.invoke()`, the isolation function was not mocking `_compat.should_strip_ansi` \r\nin addition to the `utils.should_strip_ansi`. The `_compat ` version is only called when on Windows machines which is why it was missed. Also changed the `test_testing.py::test_with_color` to no longer skip when on windows. This will ensure that future changes to the `testing.py` modules will not cause a regression back to previous behavior.\r\n\r\nfixes #2705 \r\n\r\nEnsure each step in CONTRIBUTING.rst is complete, especially the following:\r\n\r\n- [x] Add tests that demonstrate the correct behavior of the change. Tests\r\n  should fail without the change.\r\n- [x] Add or update relevant docs, in the docs folder and in code.\r\n- [x] Add an entry in CHANGES.rst summarizing the change and linking to the issue.\r\n- [x] Add `.. versionchanged::` entries in any relevant code docs.\r\n",
+    "pr_merge_commit": "5b1624bf09947d6f10eaffd63d6fb737dfe7656a",
+    "loc_touched": 6,
     "files_touched": [
-      "prompt_toolkit/application/application.py",
-      "prompt_toolkit/eventloop/dummy_contextvars.py",
-      "prompt_toolkit/shortcuts/progress_bar/base.py"
+      "CHANGES.rst",
+      "src/click/testing.py",
+      "tests/test_testing.py"
     ],
-    "linked_issue_numbers": [],
+    "test_files_touched": [
+      "tests/test_testing.py"
+    ],
     "task_id": "T14",
     "assignment": "training"
   },
   {
     "task_source": "pr",
-    "pr_number": 1685,
-    "pr_title": "Fix control-c key binding for progressbar when created in other thread + cancel_callback.",
-    "pr_url": "https://github.com/prompt-toolkit/python-prompt-toolkit/pull/1685",
-    "pr_body": "\r\n    If the ProgressBar was created in a thread that is not the main thread, the\r\n    control-c key binding should not do anything. It was killing the wrong thread.\r\n\r\n    On top of this, accept a `cancel_callback` that will be called when control-c\r\n    is pressed. This can be used to start cancellation of the code that the\r\n    progress bar is wrapping.",
-    "pr_merge_commit": "b76fa59a3be406c1e453adef4744d7954e201aa0",
-    "loc_touched": 50,
+    "pr_number": 2724,
+    "pr_title": "Fix printing of default option value to handle empty strings",
+    "pr_url": "https://github.com/pallets/click/pull/2724",
+    "pr_body": "Added an explicit check for the default value being an empty string to ensure that the default is displayed.\r\n\r\nFixes https://github.com/pallets/click/issues/2500\r\n<!--\r\nEnsure each step in CONTRIBUTING.rst is complete, especially the following:\r\n\r\n- Add tests that demonstrate the correct behavior of the change. Tests\r\n  should fail without the change.\r\n- Add or update relevant docs, in the docs folder and in code.\r\n- Add an entry in CHANGES.rst summarizing the change and linking to the issue.\r\n- Add `.. versionchanged::` entries in any relevant code docs.\r\n-->\r\n",
+    "pr_merge_commit": "d3e3852eba45a6f7ce0ae5e02ca49106e228add6",
+    "loc_touched": 12,
     "files_touched": [
-      "src/prompt_toolkit/contrib/ssh/server.py",
-      "src/prompt_toolkit/layout/utils.py",
-      "src/prompt_toolkit/shortcuts/progress_bar/base.py"
+      "CHANGES.rst",
+      "src/click/core.py",
+      "tests/test_options.py"
     ],
-    "linked_issue_numbers": [],
+    "test_files_touched": [
+      "tests/test_options.py"
+    ],
     "task_id": "T15",
     "assignment": "training"
   }

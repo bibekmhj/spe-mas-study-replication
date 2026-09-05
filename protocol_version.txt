@@ -35,3 +35,25 @@ Oracle: pytest on the identified test files. If a task has no test files
 in its reference PR, the operator is warned and the outcome falls back to
 the full-suite pass check (recorded but marked as no-oracle in the run
 summary).
+
+Protocol v6, 2026-09-05
+Change from v5: target repository changed from
+prompt-toolkit/python-prompt-toolkit to pallets/click.
+Reason: v5 enumeration on prompt-toolkit yielded only 9 candidates because
+maintainers did not consistently add regression tests for bug-fix PRs
+(49 of 156 merged bug-fix PRs had no test file). Click's project culture
+(Pallets convention) requires a test with every fix, so the test-oracle
+prerequisite yields a much larger pool from a comparable enumeration run.
+
+IMPL_EXCLUDE_PATTERNS retargeted to click-specific platform-dependent
+modules: _termui_impl.py, _winconsole.py, shell_completion.py.
+
+All other filters (BUG_TITLE_PATTERNS, MAX_LOC=300, MAX_FILES=4,
+MIN_LOC=3, test-file requirement) preserved from v5. Random-draw seeds
+(42 for tasks, 137 for holdout) preserved.
+
+Author conflict-of-interest disclosure updates: author is not a
+contributor to pallets/click. The random-draw and impl-exclude filters
+remain as methodological safeguards independent of prior contribution.
+
+Frozen commit for candidate enumeration: see frozen_commit.txt.
