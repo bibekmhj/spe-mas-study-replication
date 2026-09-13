@@ -1,10 +1,17 @@
 # Replication Package: SA vs Human-Supervised MA Coding Workflows on `pallets/click`
 
+[![DOI](https://zenodo.org/badge/1357792956.svg)](https://doi.org/10.5281/zenodo.22736597)
+
 This repository contains the replication package for the paper
 *"Single-Assistant versus Human-Supervised Multi-Agent Workflows for
 Software Bug Fixing: A Reproducible Controlled Comparison on
 pallets/click"* by Bibek Maharjan, submitted to the Special Issue on
 AI-Native Software Engineering, Software: Practice and Experience (2027).
+
+Every tagged release of this repository is archived at Zenodo with a
+persistent DOI. The DOI badge above resolves to the latest release; the
+concept DOI 10.5281/zenodo.22736597 always resolves to the most recent
+version.
 
 ## Layout
 
@@ -128,9 +135,10 @@ iterations and were left as-is.
 ## Data availability
 
 This repository is the primary data-availability artifact for the
-paper. It will be archived at Zenodo with a persistent DOI on
-acceptance; the archived version will be linked from the published
-paper's Data Availability statement.
+paper. Tagged releases are archived at Zenodo with a persistent DOI
+(concept DOI 10.5281/zenodo.22736597; see the badge at the top of this
+README for the DOI of the latest release). The archived DOI is cited
+from the published paper's Data Availability statement.
 
 ## Ethics and conflict of interest
 
