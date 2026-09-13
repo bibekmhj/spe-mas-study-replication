@@ -1,6 +1,12 @@
-.venv/
-repo/
-runs/
+.env
+.env.*
+*.key
 __pycache__/
 *.pyc
 .DS_Store
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+repo/
