@@ -1,0 +1,181 @@
+I001 [*] Import block is un-sorted or un-formatted
+  --> src/click/core.py:1:1
+   |
+ 1 | / import errno
+ 2 | | import inspect
+ 3 | | import os
+ 4 | | import sys
+ 5 | | from contextlib import contextmanager
+ 6 | | from contextlib import ExitStack
+ 7 | | from functools import update_wrapper
+ 8 | | from itertools import repeat
+ 9 | |
+10 | | from ._unicodefun import _verify_python_env
+11 | | from .exceptions import Abort
+12 | | from .exceptions import BadParameter
+13 | | from .exceptions import ClickException
+14 | | from .exceptions import Exit
+15 | | from .exceptions import MissingParameter
+16 | | from .exceptions import UsageError
+17 | | from .formatting import HelpFormatter
+18 | | from .formatting import join_options
+19 | | from .globals import pop_context
+20 | | from .globals import push_context
+21 | | from .parser import OptionParser
+22 | | from .parser import split_opt
+23 | | from .termui import confirm
+24 | | from .termui import prompt
+25 | | from .termui import style
+26 | | from .types import _NumberRangeBase
+27 | | from .types import BOOL
+28 | | from .types import convert_type
+29 | | from .types import IntRange
+30 | | from .utils import _detect_program_name
+31 | | from .utils import echo
+32 | | from .utils import make_default_short_help
+33 | | from .utils import make_str
+34 | | from .utils import PacifyFlushWrapper
+   | |_____________________________________^
+35 |
+36 |   _missing = object()
+   |
+help: Organize imports
+   |
+4  | import sys
+   - from contextlib import contextmanager
+   - from contextlib import ExitStack
+5  + from contextlib import ExitStack, contextmanager
+6  | from functools import update_wrapper
+7  | from itertools import repeat
+8  |
+9  | from ._unicodefun import _verify_python_env
+   - from .exceptions import Abort
+   - from .exceptions import BadParameter
+   - from .exceptions import ClickException
+   - from .exceptions import Exit
+   - from .exceptions import MissingParameter
+   - from .exceptions import UsageError
+   - from .formatting import HelpFormatter
+   - from .formatting import join_options
+   - from .globals import pop_context
+   - from .globals import push_context
+   - from .parser import OptionParser
+   - from .parser import split_opt
+   - from .termui import confirm
+   - from .termui import prompt
+   - from .termui import style
+   - from .types import _NumberRangeBase
+   - from .types import BOOL
+   - from .types import convert_type
+   - from .types import IntRange
+   - from .utils import _detect_program_name
+   - from .utils import echo
+   - from .utils import make_default_short_help
+   - from .utils import make_str
+   - from .utils import PacifyFlushWrapper
+10 + from .exceptions import (
+11 +     Abort,
+12 +     BadParameter,
+13 +     ClickException,
+14 +     Exit,
+15 +     MissingParameter,
+16 +     UsageError,
+17 + )
+18 + from .formatting import HelpFormatter, join_options
+19 + from .globals import pop_context, push_context
+20 + from .parser import OptionParser, split_opt
+21 + from .termui import confirm, prompt, style
+22 + from .types import BOOL, IntRange, _NumberRangeBase, convert_type
+23 + from .utils import (
+24 +     PacifyFlushWrapper,
+25 +     _detect_program_name,
+26 +     echo,
+27 +     make_default_short_help,
+28 +     make_str,
+29 + )
+30 |
+   |
+
+RUF012 Mutable default value for class attribute
+   --> src/click/core.py:146:14
+    |
+144 |     DEFAULT_MAP = "DEFAULT_MAP"
+145 |
+146 |     VALUES = {COMMANDLINE, ENVIRONMENT, DEFAULT, DEFAULT_MAP}
+    |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+147 |
+148 |     @classmethod
+    |
+help: Consider initializing in `__init__` or annotating with `typing.ClassVar`
+
+SIM117 [*] Use a single `with` statement with multiple contexts instead of nested `with` statements
+   --> src/click/core.py:669:9
+    |
+668 |           args = args[2:]
+669 | /         with augment_usage_errors(self):
+670 | |             with ctx:
+    | |_____________________^
+671 |                   return callback(*args, **kwargs)
+    |
+help: Combine `with` statements
+    |
+668 |         args = args[2:]
+    -         with augment_usage_errors(self):
+    -             with ctx:
+    -                 return callback(*args, **kwargs)
+669 +         with augment_usage_errors(self), ctx:
+670 +             return callback(*args, **kwargs)
+671 |
+    |
+
+RUF059 Unpacked variable `value` is never used
+    --> src/click/core.py:1148:13
+     |
+1147 |         for param in iter_params_for_processing(param_order, self.get_params(ctx)):
+1148 |             value, args = param.handle_parse_result(ctx, opts, args)
+     |             ^^^^^
+1149 |
+1150 |         if args and not ctx.allow_extra_args and not ctx.resilient_parsing:
+     |
+help: Prefix it with an underscore or any other dummy variable pattern
+
+PYI063 Use PEP 570 syntax for positional-only parameters
+    --> src/click/core.py:1271:26
+     |
+1269 |                 return f
+1270 |
+1271 |             def function(__value, *args, **kwargs):
+     |                          ^^^^^^^
+1272 |                 return f(old_callback(__value, *args, **kwargs), *args, **kwargs)
+     |
+help: Add `/` to function signature
+
+SIM103 Return the condition directly
+    --> src/click/core.py:1726:9
+     |
+1724 |           if value is None:
+1725 |               return True
+1726 | /         if (self.nargs != 1 or self.multiple) and value == ():
+1727 | |             return True
+1728 | |         return False
+     | |____________________^
+1729 |
+1730 |       def full_process_value(self, ctx, value):
+     |
+help: Inline condition
+
+SIM102 Use a single `if` statement instead of nested `if` statements
+    --> src/click/core.py:2040:13
+     |
+2038 |           if self.show_envvar:
+2039 |               envvar = self.envvar
+2040 | /             if envvar is None:
+2041 | |                 if self.allow_from_autoenv and ctx.auto_envvar_prefix is not None:
+     | |__________________________________________________________________________________^
+2042 |                       envvar = f"{ctx.auto_envvar_prefix}_{self.name.upper()}"
+2043 |               if envvar is not None:
+     |
+help: Combine `if` statements using `and`
+
+Found 7 errors.
+[*] 2 fixable with the `--fix` option (2 hidden fixes can be enabled with the `--unsafe-fixes` option).

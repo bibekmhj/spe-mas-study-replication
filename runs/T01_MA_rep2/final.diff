@@ -1,0 +1,118 @@
+diff --git a/CHANGES.rst b/CHANGES.rst
+index 456a978..4424cbb 100644
+--- a/CHANGES.rst
++++ b/CHANGES.rst
+@@ -25,6 +25,9 @@ Unreleased
+     Python objects like classes and enum members are passed through unchanged
+     instead of being stringified. Previously ``type=click.UNPROCESSED`` had
+     to be set explicitly. :issue:`2012` :pr:`3363`
++-   Fix the "Try ... for help" hint in usage errors to only suggest
++    help option names that are not shadowed by another parameter on the
++    same command. :issue:`2790` :pr:`3208`
+ 
+ Version 8.3.3
+ -------------
+diff --git a/src/click/exceptions.py b/src/click/exceptions.py
+index 4d782ee..e96d32b 100644
+--- a/src/click/exceptions.py
++++ b/src/click/exceptions.py
+@@ -78,10 +78,13 @@ class UsageError(ClickException):
+             self.ctx is not None
+             and self.ctx.command.get_help_option(self.ctx) is not None
+         ):
+-            hint = _("Try '{command} {option}' for help.").format(
+-                command=self.ctx.command_path, option=self.ctx.help_option_names[0]
+-            )
+-            hint = f"{hint}\n"
++            help_option_names = self.ctx.command.get_help_option_names(self.ctx)
++            if help_option_names:
++                option = max(help_option_names, key=len)
++                hint = _("Try '{command} {option}' for help.").format(
++                    command=self.ctx.command_path, option=option
++                )
++                hint = f"{hint}\n"
+         if self.ctx is not None:
+             color = self.ctx.color
+             echo(f"{self.ctx.get_usage()}\n{hint}", file=file, color=color)
+diff --git a/tests/test_formatting.py b/tests/test_formatting.py
+index c79f657..c74b53a 100644
+--- a/tests/test_formatting.py
++++ b/tests/test_formatting.py
+@@ -1,3 +1,5 @@
++import pytest
++
+ import click
+ 
+ 
+@@ -246,6 +248,71 @@ def test_formatting_usage_custom_help(runner):
+     ]
+ 
+ 
++@pytest.mark.parametrize(
++    ("help_names", "extra_options", "expected_hint"),
++    [
++        # No shadowing, longest name is picked.
++        (["-h", "--help"], [], "Try 'cli foo --help' for help."),
++        # -h shadowed by a subcommand option, --help still available.
++        (
++            ["-h", "--help"],
++            [click.option("--host", "-h")],
++            "Try 'cli foo --help' for help.",
++        ),
++        # --help shadowed, -h still available.
++        (
++            ["-h", "--help"],
++            [click.option("--help-file", "--help")],
++            "Try 'cli foo -h' for help.",
++        ),
++        # Both names shadowed: no hint line at all.
++        (
++            ["-h", "--help"],
++            [click.option("--host", "-h"), click.option("--help-file", "--help")],
++            None,
++        ),
++        # Single custom help name, not shadowed.
++        (["--man"], [], "Try 'cli foo --man' for help."),
++        # Three help names, one shadowed, longest survivor picked.
++        (
++            ["-h", "--help", "--info"],
++            [click.option("--info-file", "--info")],
++            "Try 'cli foo --help' for help.",
++        ),
++    ],
++)
++def test_formatting_usage_error_help_hint(
++    runner, help_names, extra_options, expected_hint
++):
++    """The error hint should only show non-shadowed help option names,
++    picking the longest for readability.
++
++    https://github.com/pallets/click/issues/2790
++    """
++
++    @click.group(context_settings={"help_option_names": help_names})
++    def cli():
++        pass
++
++    @cli.command()
++    @click.argument("required_arg")
++    def foo(required_arg, **kwargs):
++        pass
++
++    for option in extra_options:
++        option(foo)
++
++    result = runner.invoke(cli, ["foo"])
++    assert result.exit_code == 2
++    lines = result.output.splitlines()
++    assert lines[0] == "Usage: cli foo [OPTIONS] REQUIRED_ARG"
++    assert lines[-1] == "Error: Missing argument 'REQUIRED_ARG'."
++    if expected_hint is not None:
++        assert expected_hint in lines
++    else:
++        assert not any(line.startswith("Try ") for line in lines)
++
++
+ def test_formatting_custom_type_metavar(runner):
+     class MyType(click.ParamType):
+         def get_metavar(self, param: click.Parameter, ctx: click.Context):

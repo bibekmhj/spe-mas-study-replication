@@ -1,0 +1,17 @@
+# Python 3.14 required.
+#
+# Pin exact versions used during the study window (5-13 September 2026).
+# If your Anthropic SDK is at a later minor version, the recorded token
+# accounting fields may have moved; update `analysis/compute_tables.py`
+# accordingly.
+
+anthropic==1.4.0
+PyGithub==2.4.0
+pytest==8.3.3
+ruff==0.6.9
+mypy==1.11.2
+
+# Standard-library-friendly analysis stack; only used by analysis/compute_tables.py
+pandas==2.2.3
+numpy==2.1.2
+scipy==1.14.1

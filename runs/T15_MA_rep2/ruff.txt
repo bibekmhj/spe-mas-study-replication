@@ -1,0 +1,7 @@
+
+Fixed 4 errors:
+- src/click/core.py:
+    4 × UP037 (quoted-annotation)
+
+Found 4 errors (4 fixed, 0 remaining).
+warning: The `ignore-init-module-imports` option is deprecated and will be removed in a future release. Ruff's handling of imports in `__init__.py` files has been improved (in preview) and unused imports will always be flagged.

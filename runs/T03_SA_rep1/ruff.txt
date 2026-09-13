@@ -1,0 +1,3948 @@
+I001 [*] Import block is un-sorted or un-formatted
+  --> src/click/core.py:1:1
+   |
+ 1 | / import enum
+ 2 | | import errno
+ 3 | | import inspect
+ 4 | | import os
+ 5 | | import sys
+ 6 | | import typing as t
+ 7 | | from collections import abc
+ 8 | | from contextlib import contextmanager
+ 9 | | from contextlib import ExitStack
+10 | | from functools import update_wrapper
+11 | | from gettext import gettext as _
+12 | | from gettext import ngettext
+13 | | from itertools import repeat
+14 | | from types import TracebackType
+15 | |
+16 | | from . import types
+17 | | from .exceptions import Abort
+18 | | from .exceptions import BadParameter
+19 | | from .exceptions import ClickException
+20 | | from .exceptions import Exit
+21 | | from .exceptions import MissingParameter
+22 | | from .exceptions import UsageError
+23 | | from .formatting import HelpFormatter
+24 | | from .formatting import join_options
+25 | | from .globals import pop_context
+26 | | from .globals import push_context
+27 | | from .parser import _flag_needs_value
+28 | | from .parser import OptionParser
+29 | | from .parser import split_opt
+30 | | from .termui import confirm
+31 | | from .termui import prompt
+32 | | from .termui import style
+33 | | from .utils import _detect_program_name
+34 | | from .utils import _expand_args
+35 | | from .utils import echo
+36 | | from .utils import make_default_short_help
+37 | | from .utils import make_str
+38 | | from .utils import PacifyFlushWrapper
+   | |_____________________________________^
+39 |
+40 |   if t.TYPE_CHECKING:
+   |
+help: Organize imports
+   |
+7  | from collections import abc
+   - from contextlib import contextmanager
+   - from contextlib import ExitStack
+8  + from contextlib import ExitStack, contextmanager
+9  | from functools import update_wrapper
+--------------------------------------------------------------------------------
+15 | from . import types
+   - from .exceptions import Abort
+   - from .exceptions import BadParameter
+   - from .exceptions import ClickException
+   - from .exceptions import Exit
+   - from .exceptions import MissingParameter
+   - from .exceptions import UsageError
+   - from .formatting import HelpFormatter
+   - from .formatting import join_options
+   - from .globals import pop_context
+   - from .globals import push_context
+   - from .parser import _flag_needs_value
+   - from .parser import OptionParser
+   - from .parser import split_opt
+   - from .termui import confirm
+   - from .termui import prompt
+   - from .termui import style
+   - from .utils import _detect_program_name
+   - from .utils import _expand_args
+   - from .utils import echo
+   - from .utils import make_default_short_help
+   - from .utils import make_str
+   - from .utils import PacifyFlushWrapper
+16 + from .exceptions import (
+17 +     Abort,
+18 +     BadParameter,
+19 +     ClickException,
+20 +     Exit,
+21 +     MissingParameter,
+22 +     UsageError,
+23 + )
+24 + from .formatting import HelpFormatter, join_options
+25 + from .globals import pop_context, push_context
+26 + from .parser import OptionParser, _flag_needs_value, split_opt
+27 + from .termui import confirm, prompt, style
+28 + from .utils import (
+29 +     PacifyFlushWrapper,
+30 +     _detect_program_name,
+31 +     _expand_args,
+32 +     echo,
+33 +     make_default_short_help,
+34 +     make_str,
+35 + )
+36 |
+   |
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> src/click/core.py:41:5
+   |
+40 |   if t.TYPE_CHECKING:
+41 | /     import typing_extensions as te
+42 | |     from .shell_completion import CompletionItem
+   | |________________________________________________^
+43 |
+44 |   F = t.TypeVar("F", bound=t.Callable[..., t.Any])
+   |
+help: Organize imports
+   |
+41 |     import typing_extensions as te
+42 +
+43 |     from .shell_completion import CompletionItem
+   |
+
+UP006 [*] Use `tuple` instead of `t.Tuple` for type annotation
+  --> src/click/core.py:50:17
+   |
+48 | def _complete_visible_commands(
+49 |     ctx: "Context", incomplete: str
+50 | ) -> t.Iterator[t.Tuple[str, "Command"]]:
+   |                 ^^^^^^^
+51 |     """List all the subcommands of a group that start with the
+52 |     incomplete value and aren't hidden.
+   |
+help: Replace with `tuple`
+   |
+49 |     ctx: "Context", incomplete: str
+   - ) -> t.Iterator[t.Tuple[str, "Command"]]:
+50 + ) -> t.Iterator[tuple[str, "Command"]]:
+51 |     """List all the subcommands of a group that start with the
+   |
+
+UP006 [*] Use `list` instead of `t.List` for type annotation
+  --> src/click/core.py:91:56
+   |
+91 | def batch(iterable: t.Iterable[V], batch_size: int) -> t.List[t.Tuple[V, ...]]:
+   |                                                        ^^^^^^
+92 |     return list(zip(*repeat(iter(iterable), batch_size)))
+   |
+help: Replace with `list`
+   |
+90 |
+   - def batch(iterable: t.Iterable[V], batch_size: int) -> t.List[t.Tuple[V, ...]]:
+91 + def batch(iterable: t.Iterable[V], batch_size: int) -> list[t.Tuple[V, ...]]:
+92 |     return list(zip(*repeat(iter(iterable), batch_size)))
+   |
+
+UP006 [*] Use `tuple` instead of `t.Tuple` for type annotation
+  --> src/click/core.py:91:63
+   |
+91 | def batch(iterable: t.Iterable[V], batch_size: int) -> t.List[t.Tuple[V, ...]]:
+   |                                                               ^^^^^^^
+92 |     return list(zip(*repeat(iter(iterable), batch_size)))
+   |
+help: Replace with `tuple`
+   |
+90 |
+   - def batch(iterable: t.Iterable[V], batch_size: int) -> t.List[t.Tuple[V, ...]]:
+91 + def batch(iterable: t.Iterable[V], batch_size: int) -> t.List[tuple[V, ...]]:
+92 |     return list(zip(*repeat(iter(iterable), batch_size)))
+   |
+
+UP006 [*] Use `list` instead of `t.List` for type annotation
+   --> src/click/core.py:117:6
+    |
+115 |     invocation_order: t.Sequence["Parameter"],
+116 |     declaration_order: t.Sequence["Parameter"],
+117 | ) -> t.List["Parameter"]:
+    |      ^^^^^^
+118 |     """Given a sequence of parameters in the order as should be considered
+119 |     for processing and an iterable of parameters that exist, this returns
+    |
+help: Replace with `list`
+    |
+116 |     declaration_order: t.Sequence["Parameter"],
+    - ) -> t.List["Parameter"]:
+117 + ) -> list["Parameter"]:
+118 |     """Given a sequence of parameters in the order as should be considered
+    |
+
+UP006 [*] Use `tuple` instead of `t.Tuple` for type annotation
+   --> src/click/core.py:123:40
+    |
+121 |     """
+122 |
+123 |     def sort_key(item: "Parameter") -> t.Tuple[bool, float]:
+    |                                        ^^^^^^^
+124 |         try:
+125 |             idx: float = invocation_order.index(item)
+    |
+help: Replace with `tuple`
+    |
+122 |
+    -     def sort_key(item: "Parameter") -> t.Tuple[bool, float]:
+123 +     def sort_key(item: "Parameter") -> tuple[bool, float]:
+124 |         try:
+    |
+
+UP006 [*] Use `type` instead of `t.Type` for type annotation
+   --> src/click/core.py:258:22
+    |
+256 |     #:
+257 |     #: .. versionadded:: 8.0
+258 |     formatter_class: t.Type["HelpFormatter"] = HelpFormatter
+    |                      ^^^^^^
+259 |
+260 |     def __init__(
+    |
+help: Replace with `type`
+    |
+257 |     #: .. versionadded:: 8.0
+    -     formatter_class: t.Type["HelpFormatter"] = HelpFormatter
+258 +     formatter_class: type["HelpFormatter"] = HelpFormatter
+259 |
+    |
+
+UP045 [*] Use `X | None` for type annotations
+   --> src/click/core.py:264:20
+    |
+262 |         command: "Command",
+263 |         parent: t.Optional["Context"] = None,
+264 |         info_name: t.Optional[str] = None,
+    |                    ^^^^^^^^^^^^^^^
+265 |         obj: t.Optional[t.Any] = None,
+266 |         auto_envvar_prefix: t.Optional[str] = None,
+    |
+help: Convert to `X | None`
+    |
+263 |         parent: t.Optional["Context"] = None,
+    -         info_name: t.Optional[str] = None,
+264 +         info_name: str | None = None,
+265 |         obj: t.Optional[t.Any] = None,
+    |
+
+UP045 [*] Use `X | None` for type annotations
+   --> src/click/core.py:265:14
+    |
+263 |         parent: t.Optional["Context"] = None,
+264 |         info_name: t.Optional[str] = None,
+265 |         obj: t.Optional[t.Any] = None,
+    |              ^^^^^^^^^^^^^^^^^
+266 |         auto_envvar_prefix: t.Optional[str] = None,
+267 |         default_map: t.Optional[t.MutableMapping[str, t.Any]] = None,
+    |
+help: Convert to `X | None`
+    |
+264 |         info_name: t.Optional[str] = None,
+    -         obj: t.Optional[t.Any] = None,
+265 +         obj: t.Any | None = None,
+266 |         auto_envvar_prefix: t.Optional[str] = None,
+    |
+
+UP045 [*] Use `X | None` for type annotations
+   --> src/click/core.py:266:29
+    |
+264 |         info_name: t.Optional[str] = None,
+265 |         obj: t.Optional[t.Any] = None,
+266 |         auto_envvar_prefix: t.Optional[str] = None,
+    |                             ^^^^^^^^^^^^^^^
+267 |         default_map: t.Optional[t.MutableMapping[str, t.Any]] = None,
+268 |         terminal_width: t.Optional[int] = None,
+    |
+help: Convert to `X | None`
+    |
+265 |         obj: t.Optional[t.Any] = None,
+    -         auto_envvar_prefix: t.Optional[str] = None,
+266 +         auto_envvar_prefix: str | None = None,
+267 |         default_map: t.Optional[t.MutableMapping[str, t.Any]] = None,
+    |
+
+UP045 [*] Use `X | None` for type annotations
+   --> src/click/core.py:267:22
+    |
+265 |         obj: t.Optional[t.Any] = None,
+266 |         auto_envvar_prefix: t.Optional[str] = None,
+267 |         default_map: t.Optional[t.MutableMapping[str, t.Any]] = None,
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+268 |         terminal_width: t.Optional[int] = None,
+269 |         max_content_width: t.Optional[int] = None,
+    |
+help: Convert to `X | None`
+    |
+266 |         auto_envvar_prefix: t.Optional[str] = None,
+    -         default_map: t.Optional[t.MutableMapping[str, t.Any]] = None,
+267 +         default_map: t.MutableMapping[str, t.Any] | None = None,
+268 |         terminal_width: t.Optional[int] = None,
+    |
+
+UP045 [*] Use `X | None` for type annotations
+   --> src/click/core.py:268:25
+    |
+266 |         auto_envvar_prefix: t.Optional[str] = None,
+267 |         default_map: t.Optional[t.MutableMapping[str, t.Any]] = None,
+268 |         terminal_width: t.Optional[int] = None,
+    |                         ^^^^^^^^^^^^^^^
+269 |         max_content_width: t.Optional[int] = None,
+270 |         resilient_parsing: bool = False,
+    |
+help: Convert to `X | None`
+    |
+267 |         default_map: t.Optional[t.MutableMapping[str, t.Any]] = None,
+    -         terminal_width: t.Optional[int] = None,
+268 +         terminal_width: int | None = None,
+269 |         max_content_width: t.Optional[int] = None,
+    |
+
+UP045 [*] Use `X | None` for type annotations
+   --> src/click/core.py:269:28
+    |
+267 |         default_map: t.Optional[t.MutableMapping[str, t.Any]] = None,
+268 |         terminal_width: t.Optional[int] = None,
+269 |         max_content_width: t.Optional[int] = None,
+    |                            ^^^^^^^^^^^^^^^
+270 |         resilient_parsing: bool = False,
+271 |         allow_extra_args: t.Optional[bool] = None,
+    |
+help: Convert to `X | None`
+    |
+268 |         terminal_width: t.Optional[int] = None,
+    -         max_content_width: t.Optional[int] = None,
+269 +         max_content_width: int | None = None,
+270 |         resilient_parsing: bool = False,
+    |
+
+UP045 [*] Use `X | None` for type annotations
+   --> src/click/core.py:271:27
+    |
+269 |         max_content_width: t.Optional[int] = None,
+270 |         resilient_parsing: bool = False,
+271 |         allow_extra_args: t.Optional[bool] = None,
+    |                           ^^^^^^^^^^^^^^^^
+272 |         allow_interspersed_args: t.Optional[bool] = None,
+273 |         ignore_unknown_options: t.Optional[bool] = None,
+    |
+help: Convert to `X | None`
+    |
+270 |         resilient_parsing: bool = False,
+    -         allow_extra_args: t.Optional[bool] = None,
+271 +         allow_extra_args: bool | None = None,
+272 |         allow_interspersed_args: t.Optional[bool] = None,
+    |
+
+UP045 [*] Use `X | None` for type annotations
+   --> src/click/core.py:272:34
+    |
+270 |         resilient_parsing: bool = False,
+271 |         allow_extra_args: t.Optional[bool] = None,
+272 |         allow_interspersed_args: t.Optional[bool] = None,
+    |                                  ^^^^^^^^^^^^^^^^
+273 |         ignore_unknown_options: t.Optional[bool] = None,
+274 |         help_option_names: t.Optional[t.List[str]] = None,
+    |
+help: Convert to `X | None`
+    |
+271 |         allow_extra_args: t.Optional[bool] = None,
+    -         allow_interspersed_args: t.Optional[bool] = None,
+272 +         allow_interspersed_args: bool | None = None,
+273 |         ignore_unknown_options: t.Optional[bool] = None,
+    |
+
+UP045 [*] Use `X | None` for type annotations
+   --> src/click/core.py:273:33
+    |
+271 |         allow_extra_args: t.Optional[bool] = None,
+272 |         allow_interspersed_args: t.Optional[bool] = None,
+273 |         ignore_unknown_options: t.Optional[bool] = None,
+    |                                 ^^^^^^^^^^^^^^^^
+274 |         help_option_names: t.Optional[t.List[str]] = None,
+275 |         token_normalize_func: t.Optional[t.Callable[[str], str]] = None,
+    |
+help: Convert to `X | None`
+    |
+272 |         allow_interspersed_args: t.Optional[bool] = None,
+    -         ignore_unknown_options: t.Optional[bool] = None,
+273 +         ignore_unknown_options: bool | None = None,
+274 |         help_option_names: t.Optional[t.List[str]] = None,
+    |
+
+UP045 [*] Use `X | None` for type annotations
+   --> src/click/core.py:274:28
+    |
+272 |         allow_interspersed_args: t.Optional[bool] = None,
+273 |         ignore_unknown_options: t.Optional[bool] = None,
+274 |         help_option_names: t.Optional[t.List[str]] = None,
+    |                            ^^^^^^^^^^^^^^^^^^^^^^^
+275 |         token_normalize_func: t.Optional[t.Callable[[str], str]] = None,
+276 |         color: t.Optional[bool] = None,
+    |
+help: Convert to `X | None`
+    |
+273 |         ignore_unknown_options: t.Optional[bool] = None,
+    -         help_option_names: t.Optional[t.List[str]] = None,
+274 +         help_option_names: t.List[str] | None = None,
+275 |         token_normalize_func: t.Optional[t.Callable[[str], str]] = None,
+    |
+
+UP006 [*] Use `list` instead of `t.List` for type annotation
+   --> src/click/core.py:274:39
+    |
+272 |         allow_interspersed_args: t.Optional[bool] = None,
+273 |         ignore_unknown_options: t.Optional[bool] = None,
+274 |         help_option_names: t.Optional[t.List[str]] = None,
+    |                                       ^^^^^^
+275 |         token_normalize_func: t.Optional[t.Callable[[str], str]] = None,
+276 |         color: t.Optional[bool] = None,
+    |
+help: Replace with `list`
+    |
+273 |         ignore_unknown_options: t.Optional[bool] = None,
+    -         help_option_names: t.Optional[t.List[str]] = None,
+274 +         help_option_names: t.Optional[list[str]] = None,
+275 |         token_normalize_func: t.Optional[t.Callable[[str], str]] = None,
+    |
+
+UP045 [*] Use `X | None` for type annotations
+   --> src/click/core.py:275:31
+    |
+273 |         ignore_unknown_options: t.Optional[bool] = None,
+274 |         help_option_names: t.Optional[t.List[str]] = None,
+275 |         token_normalize_func: t.Optional[t.Callable[[str], str]] = None,
+    |                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+276 |         color: t.Optional[bool] = None,
+277 |         show_default: t.Optional[bool] = None,
+    |
+help: Convert to `X | None`
+    |
+274 |         help_option_names: t.Optional[t.List[str]] = None,
+    -         token_normalize_func: t.Optional[t.Callable[[str], str]] = None,
+275 +         token_normalize_func: t.Callable[[str], str] | None = None,
+276 |         color: t.Optional[bool] = None,
+    |
+
+UP045 [*] Use `X | None` for type annotations
+   --> src/click/core.py:276:16
+    |
+274 |         help_option_names: t.Optional[t.List[str]] = None,
+275 |         token_normalize_func: t.Optional[t.Callable[[str], str]] = None,
+276 |         color: t.Optional[bool] = None,
+    |                ^^^^^^^^^^^^^^^^
+277 |         show_default: t.Optional[bool] = None,
+278 |     ) -> None:
+    |
+help: Convert to `X | None`
+    |
+275 |         token_normalize_func: t.Optional[t.Callable[[str], str]] = None,
+    -         color: t.Optional[bool] = None,
+276 +         color: bool | None = None,
+277 |         show_default: t.Optional[bool] = None,
+    |
+
+UP045 [*] Use `X | None` for type annotations
+   --> src/click/core.py:277:23
+    |
+275 |         token_normalize_func: t.Optional[t.Callable[[str], str]] = None,
+276 |         color: t.Optional[bool] = None,
+277 |         show_default: t.Optional[bool] = None,
+    |                       ^^^^^^^^^^^^^^^^
+278 |     ) -> None:
+279 |         #: the parent context or `None` if none exists.
+    |
+help: Convert to `X | None`
+    |
+276 |         color: t.Optional[bool] = None,
+    -         show_default: t.Optional[bool] = None,
+277 +         show_default: bool | None = None,
+278 |     ) -> None:
+    |
+
+UP006 [*] Use `dict` instead of `t.Dict` for type annotation
+   --> src/click/core.py:287:22
+    |
+285 |         #: Map of parameter names to their parsed values. Parameters
+286 |         #: with ``expose_value=False`` are not stored.
+287 |         self.params: t.Dict[str, t.Any] = {}
+    |                      ^^^^^^
+288 |         #: the leftover arguments.
+289 |         self.args: t.List[str] = []
+    |
+help: Replace with `dict`
+    |
+286 |         #: with ``expose_value=False`` are not stored.
+    -         self.params: t.Dict[str, t.Any] = {}
+287 +         self.params: dict[str, t.Any] = {}
+288 |         #: the leftover arguments.
+    |
+
+UP006 [*] Use `list` instead of `t.List` for type annotation
+   --> src/click/core.py:289:20
+    |
+287 |         self.params: t.Dict[str, t.Any] = {}
+288 |         #: the leftover arguments.
+289 |         self.args: t.List[str] = []
+    |                    ^^^^^^
+290 |         #: protected arguments.  These are arguments that are prepended
+291 |         #: to `args` when certain parsing scenarios are encountered but
+    |
+help: Replace with `list`
+    |
+288 |         #: the leftover arguments.
+    -         self.args: t.List[str] = []
+289 +         self.args: list[str] = []
+290 |         #: protected arguments.  These are arguments that are prepended
+    |
+
+UP006 [*] Use `list` instead of `t.List` for type annotation
+   --> src/click/core.py:294:30
+    |
+292 |         #: must be never propagated to another arguments.  This is used
+293 |         #: to implement nested parsing.
+294 |         self.protected_args: t.List[str] = []
+    |                              ^^^^^^
+295 |         #: the collected prefixes of the command's options.
+296 |         self._opt_prefixes: t.Set[str] = set(parent._opt_prefixes) if parent else set()
+    |
+help: Replace with `list`
+    |
+293 |         #: to implement nested parsing.
+    -         self.protected_args: t.List[str] = []
+294 +         self.protected_args: list[str] = []
+295 |         #: the collected prefixes of the command's options.
+    |
+
+UP006 [*] Use `set` instead of `t.Set` for type annotation
+   --> src/click/core.py:296:29
+    |
+294 |         self.protected_args: t.List[str] = []
+295 |         #: the collected prefixes of the command's options.
+296 |         self._opt_prefixes: t.Set[str] = set(parent._opt_prefixes) if parent else set()
+    |                             ^^^^^
+297 |
+298 |         if obj is None and parent is not None:
+    |
+help: Replace with `set`
+    |
+295 |         #: the collected prefixes of the command's options.
+    -         self._opt_prefixes: t.Set[str] = set(parent._opt_prefixes) if parent else set()
+296 +         self._opt_prefixes: set[str] = set(parent._opt_prefixes) if parent else set()
+297 |
+    |
+
+UP006 [*] Use `dict` instead of `t.Dict` for type annotation
+   --> src/click/core.py:303:21
+    |
+301 |         #: the user object stored.
+302 |         self.obj: t.Any = obj
+303 |         self._meta: t.Dict[str, t.Any] = getattr(parent, "meta", {})
+    |                     ^^^^^^
+304 |
+305 |         #: A dictionary (-like object) with defaults for parameters.
+    |
+help: Replace with `dict`
+    |
+302 |         self.obj: t.Any = obj
+    -         self._meta: t.Dict[str, t.Any] = getattr(parent, "meta", {})
+303 +         self._meta: dict[str, t.Any] = getattr(parent, "meta", {})
+304 |
+    |
+
+UP045 [*] Use `X | None` for type annotations
+   --> src/click/core.py:314:27
+    |
+312 |             default_map = parent.default_map.get(info_name)
+313 |
+314 |         self.default_map: t.Optional[t.MutableMapping[str, t.Any]] = default_map
+    |                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+315 |
+316 |         #: This flag indicates if a subcommand is going to be executed. A
+    |
+help: Convert to `X | None`
+    |
+313 |
+    -         self.default_map: t.Optional[t.MutableMapping[str, t.Any]] = default_map
+314 +         self.default_map: t.MutableMapping[str, t.Any] | None = default_map
+315 |
+    |
+
+UP045 [*] Use `X | None` for type annotations
+   --> src/click/core.py:326:34
+    |
+324 |         #: figure out which ones.  If you require this knowledge you
+325 |         #: should use a :func:`result_callback`.
+326 |         self.invoked_subcommand: t.Optional[str] = None
+    |                                  ^^^^^^^^^^^^^^^
+327 |
+328 |         if terminal_width is None and parent is not None:
+    |
+help: Convert to `X | None`
+    |
+325 |         #: should use a :func:`result_callback`.
+    -         self.invoked_subcommand: t.Optional[str] = None
+326 +         self.invoked_subcommand: str | None = None
+327 |
+    |
+
+UP045 [*] Use `X | None` for type annotations
+   --> src/click/core.py:332:30
+    |
+331 |         #: The width of the terminal (None is autodetection).
+332 |         self.terminal_width: t.Optional[int] = terminal_width
+    |                              ^^^^^^^^^^^^^^^
+333 |
+334 |         if max_content_width is None and parent is not None:
+    |
+help: Convert to `X | None`
+    |
+331 |         #: The width of the terminal (None is autodetection).
+    -         self.terminal_width: t.Optional[int] = terminal_width
+332 +         self.terminal_width: int | None = terminal_width
+333 |
+    |
+
+UP045 [*] Use `X | None` for type annotations
+   --> src/click/core.py:339:33
+    |
+337 |         #: The maximum width of formatted content (None implies a sensible
+338 |         #: default which is 80 for most things).
+339 |         self.max_content_width: t.Optional[int] = max_content_width
+    |                                 ^^^^^^^^^^^^^^^
+340 |
+341 |         if allow_extra_args is None:
+    |
+help: Convert to `X | None`
+    |
+338 |         #: default which is 80 for most things).
+    -         self.max_content_width: t.Optional[int] = max_content_width
+339 +         self.max_content_width: int | None = max_content_width
+340 |
+    |
+
+UP006 [*] Use `list` instead of `t.List` for type annotation
+   --> src/click/core.py:379:33
+    |
+378 |         #: The names for the help options.
+379 |         self.help_option_names: t.List[str] = help_option_names
+    |                                 ^^^^^^
+380 |
+381 |         if token_normalize_func is None and parent is not None:
+    |
+help: Replace with `list`
+    |
+378 |         #: The names for the help options.
+    -         self.help_option_names: t.List[str] = help_option_names
+379 +         self.help_option_names: list[str] = help_option_names
+380 |
+    |
+
+UP045 [*] Use `X | None` for type annotations
+   --> src/click/core.py:386:36
+    |
+384 |           #: An optional normalization function for tokens.  This is
+385 |           #: options, choices, commands etc.
+386 |           self.token_normalize_func: t.Optional[
+    |  ____________________________________^
+387 | |             t.Callable[[str], str]
+388 | |         ] = token_normalize_func
+    | |_________^
+389 |
+390 |           #: Indicates if resilient parsing is enabled.  In that case Click
+    |
+help: Convert to `X | None`
+    |
+385 |         #: options, choices, commands etc.
+    -         self.token_normalize_func: t.Optional[
+    -             t.Callable[[str], str]
+    -         ] = token_normalize_func
+386 +         self.token_normalize_func: t.Callable[[str], str] | None = token_normalize_func
+387 |
+    |
+
+UP045 [*] Use `X | None` for type annotations
+   --> src/click/core.py:413:34
+    |
+411 |             auto_envvar_prefix = auto_envvar_prefix.replace("-", "_")
+412 |
+413 |         self.auto_envvar_prefix: t.Optional[str] = auto_envvar_prefix
+    |                                  ^^^^^^^^^^^^^^^
+414 |
+415 |         if color is None and parent is not None:
+    |
+help: Convert to `X | None`
+    |
+412 |
+    -         self.auto_envvar_prefix: t.Optional[str] = auto_envvar_prefix
+413 +         self.auto_envvar_prefix: str | None = auto_envvar_prefix
+414 |
+    |
+
+UP045 [*] Use `X | None` for type annotations
+   --> src/click/core.py:419:21
+    |
+418 |         #: Controls if styling output is wanted or not.
+419 |         self.color: t.Optional[bool] = color
+    |                     ^^^^^^^^^^^^^^^^
+420 |
+421 |         if show_default is None and parent is not None:
+    |
+help: Convert to `X | None`
+    |
+418 |         #: Controls if styling output is wanted or not.
+    -         self.color: t.Optional[bool] = color
+419 +         self.color: bool | None = color
+420 |
+    |
+
+UP045 [*] Use `X | None` for type annotations
+   --> src/click/core.py:425:28
+    |
+424 |         #: Show option default values when formatting help text.
+425 |         self.show_default: t.Optional[bool] = show_default
+    |                            ^^^^^^^^^^^^^^^^
+426 |
+427 |         self._close_callbacks: t.List[t.Callable[[], t.Any]] = []
+    |
+help: Convert to `X | None`
+    |
+424 |         #: Show option default values when formatting help text.
+    -         self.show_default: t.Optional[bool] = show_default
+425 +         self.show_default: bool | None = show_default
+426 |
+    |
+
+UP006 [*] Use `list` instead of `t.List` for type annotation
+   --> src/click/core.py:427:32
+    |
+425 |         self.show_default: t.Optional[bool] = show_default
+426 |
+427 |         self._close_callbacks: t.List[t.Callable[[], t.Any]] = []
+    |                                ^^^^^^
+428 |         self._depth = 0
+429 |         self._parameter_source: t.Dict[str, ParameterSource] = {}
+    |
+help: Replace with `list`
+    |
+426 |
+    -         self._close_callbacks: t.List[t.Callable[[], t.Any]] = []
+427 +         self._close_callbacks: list[t.Callable[[], t.Any]] = []
+428 |         self._depth = 0
+    |
+
+UP006 [*] Use `dict` instead of `t.Dict` for type annotation
+   --> src/click/core.py:429:33
+    |
+427 |         self._close_callbacks: t.List[t.Callable[[], t.Any]] = []
+428 |         self._depth = 0
+429 |         self._parameter_source: t.Dict[str, ParameterSource] = {}
+    |                                 ^^^^^^
+430 |         self._exit_stack = ExitStack()
+    |
+help: Replace with `dict`
+    |
+428 |         self._depth = 0
+    -         self._parameter_source: t.Dict[str, ParameterSource] = {}
+429 +         self._parameter_source: dict[str, ParameterSource] = {}
+430 |         self._exit_stack = ExitStack()
+    |
+
+UP006 [*] Use `dict` instead of `t.Dict` for type annotation
+   --> src/click/core.py:432:31
+    |
+430 |         self._exit_stack = ExitStack()
+431 |
+432 |     def to_info_dict(self) -> t.Dict[str, t.Any]:
+    |                               ^^^^^^
+433 |         """Gather information that could be useful for a tool generating
+434 |         user-facing documentation. This traverses the entire CLI
+    |
+help: Replace with `dict`
+    |
+431 |
+    -     def to_info_dict(self) -> t.Dict[str, t.Any]:
+432 +     def to_info_dict(self) -> dict[str, t.Any]:
+433 |         """Gather information that could be useful for a tool generating
+    |
+
+PYI034 `__enter__` methods in classes like `Context` usually return `self` at runtime
+   --> src/click/core.py:453:9
+    |
+451 |         }
+452 |
+453 |     def __enter__(self) -> "Context":
+    |         ^^^^^^^^^
+454 |         self._depth += 1
+455 |         push_context(self)
+    |
+help: Use `Self` as return type
+
+UP045 [*] Use `X | None` for type annotations
+   --> src/click/core.py:460:19
+    |
+458 |     def __exit__(
+459 |         self,
+460 |         exc_type: t.Optional[t.Type[BaseException]],
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+461 |         exc_value: t.Optional[BaseException],
+462 |         tb: t.Optional[TracebackType],
+    |
+help: Convert to `X | None`
+    |
+459 |         self,
+    -         exc_type: t.Optional[t.Type[BaseException]],
+460 +         exc_type: t.Type[BaseException] | None,
+461 |         exc_value: t.Optional[BaseException],
+    |
+
+UP006 [*] Use `type` instead of `t.Type` for type annotation
+   --> src/click/core.py:460:30
+    |
+458 |     def __exit__(
+459 |         self,
+460 |         exc_type: t.Optional[t.Type[BaseException]],
+    |                              ^^^^^^
+461 |         exc_value: t.Optional[BaseException],
+462 |         tb: t.Optional[TracebackType],
+    |
+help: Replace with `type`
+    |
+459 |         self,
+    -         exc_type: t.Optional[t.Type[BaseException]],
+460 +         exc_type: t.Optional[type[BaseException]],
+461 |         exc_value: t.Optional[BaseException],
+    |
+
+UP045 [*] Use `X | None` for type annotations
+   --> src/click/core.py:461:20
+    |
+459 |         self,
+460 |         exc_type: t.Optional[t.Type[BaseException]],
+461 |         exc_value: t.Optional[BaseException],
+    |                    ^^^^^^^^^^^^^^^^^^^^^^^^^
+462 |         tb: t.Optional[TracebackType],
+463 |     ) -> None:
+    |
+help: Convert to `X | None`
+    |
+460 |         exc_type: t.Optional[t.Type[BaseException]],
+    -         exc_value: t.Optional[BaseException],
+461 +         exc_value: BaseException | None,
+462 |         tb: t.Optional[TracebackType],
+    |
+
+UP045 [*] Use `X | None` for type annotations
+   --> src/click/core.py:462:13
+    |
+460 |         exc_type: t.Optional[t.Type[BaseException]],
+461 |         exc_value: t.Optional[BaseException],
+462 |         tb: t.Optional[TracebackType],
+    |             ^^^^^^^^^^^^^^^^^^^^^^^^^
+463 |     ) -> None:
+464 |         self._depth -= 1
+    |
+help: Convert to `X | None`
+    |
+461 |         exc_value: t.Optional[BaseException],
+    -         tb: t.Optional[TracebackType],
+462 +         tb: TracebackType | None,
+463 |     ) -> None:
+    |
+
+UP006 [*] Use `dict` instead of `t.Dict` for type annotation
+   --> src/click/core.py:508:23
+    |
+507 |     @property
+508 |     def meta(self) -> t.Dict[str, t.Any]:
+    |                       ^^^^^^
+509 |         """This is a dictionary which is shared with all the contexts
+510 |         that are nested.  It exists so that click utilities can store some
+    |
+help: Replace with `dict`
+    |
+507 |     @property
+    -     def meta(self) -> t.Dict[str, t.Any]:
+508 +     def meta(self) -> dict[str, t.Any]:
+509 |         """This is a dictionary which is shared with all the contexts
+    |
+
+UP006 [*] Use `type` instead of `t.Type` for type annotation
+   --> src/click/core.py:625:40
+    |
+623 |         return node
+624 |
+625 |     def find_object(self, object_type: t.Type[V]) -> t.Optional[V]:
+    |                                        ^^^^^^
+626 |         """Finds the closest object of a given type."""
+627 |         node: t.Optional["Context"] = self
+    |
+help: Replace with `type`
+    |
+624 |
+    -     def find_object(self, object_type: t.Type[V]) -> t.Optional[V]:
+625 +     def find_object(self, object_type: type[V]) -> t.Optional[V]:
+626 |         """Finds the closest object of a given type."""
+    |
+
+UP045 [*] Use `X | None` for type annotations
+   --> src/click/core.py:625:54
+    |
+623 |         return node
+624 |
+625 |     def find_object(self, object_type: t.Type[V]) -> t.Optional[V]:
+    |                                                      ^^^^^^^^^^^^^
+626 |         """Finds the closest object of a given type."""
+627 |         node: t.Optional["Context"] = self
+    |
+help: Convert to `X | None`
+    |
+624 |
+    -     def find_object(self, object_type: t.Type[V]) -> t.Optional[V]:
+625 +     def find_object(self, object_type: t.Type[V]) -> V | None:
+626 |         """Finds the closest object of a given type."""
+    |
+
+UP045 [*] Use `X | None` for type annotations
+   --> src/click/core.py:627:15
+    |
+625 |     def find_object(self, object_type: t.Type[V]) -> t.Optional[V]:
+626 |         """Finds the closest object of a given type."""
+627 |         node: t.Optional["Context"] = self
+    |               ^^^^^^^^^^^^^^^^^^^^^
+628 |
+629 |         while node is not None:
+    |
+help: Convert to `X | None`
+    |
+626 |         """Finds the closest object of a given type."""
+    -         node: t.Optional["Context"] = self
+627 +         node: "Context" | None = self
+628 |
+    |
+
+UP037 [*] Remove quotes from type annotation
+   --> src/click/core.py:627:26
+    |
+625 |     def find_object(self, object_type: t.Type[V]) -> t.Optional[V]:
+626 |         """Finds the closest object of a given type."""
+627 |         node: t.Optional["Context"] = self
+    |                          ^^^^^^^^^
+628 |
+629 |         while node is not None:
+    |
+help: Remove quotes
+    |
+626 |         """Finds the closest object of a given type."""
+    -         node: t.Optional["Context"] = self
+627 +         node: t.Optional[Context] = self
+628 |
+    |
+
+UP006 [*] Use `type` instead of `t.Type` for type annotation
+   --> src/click/core.py:637:42
+    |
+635 |         return None
+636 |
+637 |     def ensure_object(self, object_type: t.Type[V]) -> V:
+    |                                          ^^^^^^
+638 |         """Like :meth:`find_object` but sets the innermost object to a
+639 |         new instance of `object_type` if it does not exist.
+    |
+help: Replace with `type`
+    |
+636 |
+    -     def ensure_object(self, object_type: t.Type[V]) -> V:
+637 +     def ensure_object(self, object_type: type[V]) -> V:
+638 |         """Like :meth:`find_object` but sets the innermost object to a
+    |
+
+UP045 [*] Use `X | None` for type annotations
+   --> src/click/core.py:649:10
+    |
+647 |     def lookup_default(
+648 |         self, name: str, call: "te.Literal[True]" = True
+649 |     ) -> t.Optional[t.Any]:
+    |          ^^^^^^^^^^^^^^^^^
+650 |         ...
+    |
+help: Convert to `X | None`
+    |
+648 |         self, name: str, call: "te.Literal[True]" = True
+    -     ) -> t.Optional[t.Any]:
+649 +     ) -> t.Any | None:
+650 |         ...
+    |
+
+UP045 [*] Use `X | None` for type annotations
+   --> src/click/core.py:655:10
+    |
+653 |     def lookup_default(
+654 |         self, name: str, call: "te.Literal[False]" = ...
+655 |     ) -> t.Optional[t.Union[t.Any, t.Callable[[], t.Any]]]:
+    |          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+656 |         ...
+    |
+help: Convert to `X | None`
+    |
+654 |         self, name: str, call: "te.Literal[False]" = ...
+    -     ) -> t.Optional[t.Union[t.Any, t.Callable[[], t.Any]]]:
+655 +     ) -> t.Union[t.Any, t.Callable[[], t.Any]] | None:
+656 |         ...
+    |
+
+UP007 [*] Use `X | Y` for type annotations
+   --> src/click/core.py:655:21
+    |
+653 |     def lookup_default(
+654 |         self, name: str, call: "te.Literal[False]" = ...
+655 |     ) -> t.Optional[t.Union[t.Any, t.Callable[[], t.Any]]]:
+    |                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+656 |         ...
+    |
+help: Convert to `X | Y`
+    |
+654 |         self, name: str, call: "te.Literal[False]" = ...
+    -     ) -> t.Optional[t.Union[t.Any, t.Callable[[], t.Any]]]:
+655 +     ) -> t.Optional[t.Any | t.Callable[[], t.Any]]:
+656 |         ...
+    |
+
+UP045 [*] Use `X | None` for type annotations
+   --> src/click/core.py:658:63
+    |
+656 |         ...
+657 |
+658 |     def lookup_default(self, name: str, call: bool = True) -> t.Optional[t.Any]:
+    |                                                               ^^^^^^^^^^^^^^^^^
+659 |         """Get the default for a parameter from :attr:`default_map`.
+    |
+help: Convert to `X | None`
+    |
+657 |
+    -     def lookup_default(self, name: str, call: bool = True) -> t.Optional[t.Any]:
+658 +     def lookup_default(self, name: str, call: bool = True) -> t.Any | None:
+659 |         """Get the default for a parameter from :attr:`default_map`.
+    |
+
+PYI063 Use PEP 570 syntax for positional-only parameters
+   --> src/click/core.py:717:9
+    |
+715 |     def invoke(
+716 |         __self,  # noqa: B902
+717 |         __callback: "t.Callable[..., V]",
+    |         ^^^^^^^^^^
+718 |         *args: t.Any,
+719 |         **kwargs: t.Any,
+    |
+help: Add `/` to function signature
+
+PYI063 Use PEP 570 syntax for positional-only parameters
+   --> src/click/core.py:726:9
+    |
+724 |     def invoke(
+725 |         __self,  # noqa: B902
+726 |         __callback: "Command",
+    |         ^^^^^^^^^^
+727 |         *args: t.Any,
+728 |         **kwargs: t.Any,
+    |
+help: Add `/` to function signature
+
+PYI063 Use PEP 570 syntax for positional-only parameters
+   --> src/click/core.py:734:9
+    |
+732 |     def invoke(
+733 |         __self,  # noqa: B902
+734 |         __callback: t.Union["Command", "t.Callable[..., V]"],
+    |         ^^^^^^^^^^
+735 |         *args: t.Any,
+736 |         **kwargs: t.Any,
+    |
+help: Add `/` to function signature
+
+UP007 [*] Use `X | Y` for type annotations
+   --> src/click/core.py:737:10
+    |
+735 |         *args: t.Any,
+736 |         **kwargs: t.Any,
+737 |     ) -> t.Union[t.Any, V]:
+    |          ^^^^^^^^^^^^^^^^^
+738 |         """Invokes a command callback in exactly the way it expects.  There
+739 |         are two ways to invoke this method:
+    |
+help: Convert to `X | Y`
+    |
+736 |         **kwargs: t.Any,
+    -     ) -> t.Union[t.Any, V]:
+737 +     ) -> t.Any | V:
+738 |         """Invokes a command callback in exactly the way it expects.  There
+    |
+
+SIM117 [*] Use a single `with` statement with multiple contexts instead of nested `with` statements
+   --> src/click/core.py:781:9
+    |
+779 |               ctx = __self
+780 |
+781 | /         with augment_usage_errors(__self):
+782 | |             with ctx:
+    | |_____________________^
+783 |                   return __callback(*args, **kwargs)
+    |
+help: Combine `with` statements
+    |
+780 |
+    -         with augment_usage_errors(__self):
+    -             with ctx:
+    -                 return __callback(*args, **kwargs)
+781 +         with augment_usage_errors(__self), ctx:
+782 +             return __callback(*args, **kwargs)
+783 |
+    |
+
+PYI063 Use PEP 570 syntax for positional-only parameters
+   --> src/click/core.py:786:17
+    |
+785 |     def forward(
+786 |         __self, __cmd: "Command", *args: t.Any, **kwargs: t.Any  # noqa: B902
+    |                 ^^^^^
+787 |     ) -> t.Any:
+788 |         """Similar to :meth:`invoke` but fills in default keyword
+    |
+help: Add `/` to function signature
+
+UP045 [*] Use `X | None` for type annotations
+   --> src/click/core.py:815:50
+    |
+813 |         self._parameter_source[name] = source
+814 |
+815 |     def get_parameter_source(self, name: str) -> t.Optional[ParameterSource]:
+    |                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+816 |         """Get the source of a parameter. This indicates the location
+817 |         from which the value of the parameter was obtained.
+    |
+help: Convert to `X | None`
+    |
+814 |
+    -     def get_parameter_source(self, name: str) -> t.Optional[ParameterSource]:
+815 +     def get_parameter_source(self, name: str) -> ParameterSource | None:
+816 |         """Get the source of a parameter. This indicates the location
+    |
+
+UP006 [*] Use `type` instead of `t.Type` for type annotation
+   --> src/click/core.py:859:20
+    |
+857 |     #:
+858 |     #: .. versionadded:: 8.0
+859 |     context_class: t.Type[Context] = Context
+    |                    ^^^^^^
+860 |     #: the default for the :attr:`Context.allow_extra_args` flag.
+861 |     allow_extra_args = False
+    |
+help: Replace with `type`
+    |
+858 |     #: .. versionadded:: 8.0
+    -     context_class: t.Type[Context] = Context
+859 +     context_class: type[Context] = Context
+860 |     #: the default for the :attr:`Context.allow_extra_args` flag.
+    |
+
+UP045 [*] Use `X | None` for type annotations
+   --> src/click/core.py:869:15
+    |
+867 |     def __init__(
+868 |         self,
+869 |         name: t.Optional[str],
+    |               ^^^^^^^^^^^^^^^
+870 |         context_settings: t.Optional[t.MutableMapping[str, t.Any]] = None,
+871 |     ) -> None:
+    |
+help: Convert to `X | None`
+    |
+868 |         self,
+    -         name: t.Optional[str],
+869 +         name: str | None,
+870 |         context_settings: t.Optional[t.MutableMapping[str, t.Any]] = None,
+    |
+
+UP045 [*] Use `X | None` for type annotations
+   --> src/click/core.py:870:27
+    |
+868 |         self,
+869 |         name: t.Optional[str],
+870 |         context_settings: t.Optional[t.MutableMapping[str, t.Any]] = None,
+    |                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+871 |     ) -> None:
+872 |         #: the name the command thinks it has.  Upon registering a command
+    |
+help: Convert to `X | None`
+    |
+869 |         name: t.Optional[str],
+    -         context_settings: t.Optional[t.MutableMapping[str, t.Any]] = None,
+870 +         context_settings: t.MutableMapping[str, t.Any] | None = None,
+871 |     ) -> None:
+    |
+
+UP006 [*] Use `dict` instead of `t.Dict` for type annotation
+   --> src/click/core.py:884:45
+    |
+882 |         self.context_settings: t.MutableMapping[str, t.Any] = context_settings
+883 |
+884 |     def to_info_dict(self, ctx: Context) -> t.Dict[str, t.Any]:
+    |                                             ^^^^^^
+885 |         """Gather information that could be useful for a tool generating
+886 |         user-facing documentation. This traverses the entire structure
+    |
+help: Replace with `dict`
+    |
+883 |
+    -     def to_info_dict(self, ctx: Context) -> t.Dict[str, t.Any]:
+884 +     def to_info_dict(self, ctx: Context) -> dict[str, t.Any]:
+885 |         """Gather information that could be useful for a tool generating
+    |
+
+UP045 [*] Use `X | None` for type annotations
+   --> src/click/core.py:909:20
+    |
+907 |     def make_context(
+908 |         self,
+909 |         info_name: t.Optional[str],
+    |                    ^^^^^^^^^^^^^^^
+910 |         args: t.List[str],
+911 |         parent: t.Optional[Context] = None,
+    |
+help: Convert to `X | None`
+    |
+908 |         self,
+    -         info_name: t.Optional[str],
+909 +         info_name: str | None,
+910 |         args: t.List[str],
+    |
+
+UP006 [*] Use `list` instead of `t.List` for type annotation
+   --> src/click/core.py:910:15
+    |
+908 |         self,
+909 |         info_name: t.Optional[str],
+910 |         args: t.List[str],
+    |               ^^^^^^
+911 |         parent: t.Optional[Context] = None,
+912 |         **extra: t.Any,
+    |
+help: Replace with `list`
+    |
+909 |         info_name: t.Optional[str],
+    -         args: t.List[str],
+910 +         args: list[str],
+911 |         parent: t.Optional[Context] = None,
+    |
+
+UP045 [*] Use `X | None` for type annotations
+   --> src/click/core.py:911:17
+    |
+909 |         info_name: t.Optional[str],
+910 |         args: t.List[str],
+911 |         parent: t.Optional[Context] = None,
+    |                 ^^^^^^^^^^^^^^^^^^^
+912 |         **extra: t.Any,
+913 |     ) -> Context:
+    |
+help: Convert to `X | None`
+    |
+910 |         args: t.List[str],
+    -         parent: t.Optional[Context] = None,
+911 +         parent: Context | None = None,
+912 |         **extra: t.Any,
+    |
+
+UP006 [*] Use `list` instead of `t.List` for type annotation
+   --> src/click/core.py:946:46
+    |
+944 |         return ctx
+945 |
+946 |     def parse_args(self, ctx: Context, args: t.List[str]) -> t.List[str]:
+    |                                              ^^^^^^
+947 |         """Given a context and a list of arguments this creates the parser
+948 |         and parses the arguments, then modifies the context as necessary.
+    |
+help: Replace with `list`
+    |
+945 |
+    -     def parse_args(self, ctx: Context, args: t.List[str]) -> t.List[str]:
+946 +     def parse_args(self, ctx: Context, args: list[str]) -> t.List[str]:
+947 |         """Given a context and a list of arguments this creates the parser
+    |
+
+UP006 [*] Use `list` instead of `t.List` for type annotation
+   --> src/click/core.py:946:62
+    |
+944 |         return ctx
+945 |
+946 |     def parse_args(self, ctx: Context, args: t.List[str]) -> t.List[str]:
+    |                                                              ^^^^^^
+947 |         """Given a context and a list of arguments this creates the parser
+948 |         and parses the arguments, then modifies the context as necessary.
+    |
+help: Replace with `list`
+    |
+945 |
+    -     def parse_args(self, ctx: Context, args: t.List[str]) -> t.List[str]:
+946 +     def parse_args(self, ctx: Context, args: t.List[str]) -> list[str]:
+947 |         """Given a context and a list of arguments this creates the parser
+    |
+
+UP006 [*] Use `list` instead of `t.List` for type annotation
+   --> src/click/core.py:959:64
+    |
+957 |         raise NotImplementedError("Base commands are not invocable by default")
+958 |
+959 |     def shell_complete(self, ctx: Context, incomplete: str) -> t.List["CompletionItem"]:
+    |                                                                ^^^^^^
+960 |         """Return a list of completions for the incomplete value. Looks
+961 |         at the names of chained multi-commands.
+    |
+help: Replace with `list`
+    |
+958 |
+    -     def shell_complete(self, ctx: Context, incomplete: str) -> t.List["CompletionItem"]:
+959 +     def shell_complete(self, ctx: Context, incomplete: str) -> list["CompletionItem"]:
+960 |         """Return a list of completions for the incomplete value. Looks
+    |
+
+UP006 [*] Use `list` instead of `t.List` for type annotation
+   --> src/click/core.py:974:18
+    |
+972 |         from click.shell_completion import CompletionItem
+973 |
+974 |         results: t.List["CompletionItem"] = []
+    |                  ^^^^^^
+975 |
+976 |         while ctx.parent is not None:
+    |
+help: Replace with `list`
+    |
+973 |
+    -         results: t.List["CompletionItem"] = []
+974 +         results: list["CompletionItem"] = []
+975 |
+    |
+
+UP037 [*] Remove quotes from type annotation
+   --> src/click/core.py:974:25
+    |
+972 |         from click.shell_completion import CompletionItem
+973 |
+974 |         results: t.List["CompletionItem"] = []
+    |                         ^^^^^^^^^^^^^^^^
+975 |
+976 |         while ctx.parent is not None:
+    |
+help: Remove quotes
+    |
+973 |
+    -         results: t.List["CompletionItem"] = []
+974 +         results: t.List[CompletionItem] = []
+975 |
+    |
+
+UP045 [*] Use `X | None` for type annotations
+   --> src/click/core.py:991:15
+    |
+989 |     def main(
+990 |         self,
+991 |         args: t.Optional[t.Sequence[str]] = None,
+    |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+992 |         prog_name: t.Optional[str] = None,
+993 |         complete_var: t.Optional[str] = None,
+    |
+help: Convert to `X | None`
+    |
+990 |         self,
+    -         args: t.Optional[t.Sequence[str]] = None,
+991 +         args: t.Sequence[str] | None = None,
+992 |         prog_name: t.Optional[str] = None,
+    |
+
+UP045 [*] Use `X | None` for type annotations
+   --> src/click/core.py:992:20
+    |
+990 |         self,
+991 |         args: t.Optional[t.Sequence[str]] = None,
+992 |         prog_name: t.Optional[str] = None,
+    |                    ^^^^^^^^^^^^^^^
+993 |         complete_var: t.Optional[str] = None,
+994 |         standalone_mode: "te.Literal[True]" = True,
+    |
+help: Convert to `X | None`
+    |
+991 |         args: t.Optional[t.Sequence[str]] = None,
+    -         prog_name: t.Optional[str] = None,
+992 +         prog_name: str | None = None,
+993 |         complete_var: t.Optional[str] = None,
+    |
+
+UP045 [*] Use `X | None` for type annotations
+   --> src/click/core.py:993:23
+    |
+991 |         args: t.Optional[t.Sequence[str]] = None,
+992 |         prog_name: t.Optional[str] = None,
+993 |         complete_var: t.Optional[str] = None,
+    |                       ^^^^^^^^^^^^^^^
+994 |         standalone_mode: "te.Literal[True]" = True,
+995 |         **extra: t.Any,
+    |
+help: Convert to `X | None`
+    |
+992 |         prog_name: t.Optional[str] = None,
+    -         complete_var: t.Optional[str] = None,
+993 +         complete_var: str | None = None,
+994 |         standalone_mode: "te.Literal[True]" = True,
+    |
+
+UP045 [*] Use `X | None` for type annotations
+    --> src/click/core.py:1002:15
+     |
+1000 |     def main(
+1001 |         self,
+1002 |         args: t.Optional[t.Sequence[str]] = None,
+     |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+1003 |         prog_name: t.Optional[str] = None,
+1004 |         complete_var: t.Optional[str] = None,
+     |
+help: Convert to `X | None`
+     |
+1001 |         self,
+     -         args: t.Optional[t.Sequence[str]] = None,
+1002 +         args: t.Sequence[str] | None = None,
+1003 |         prog_name: t.Optional[str] = None,
+     |
+
+UP045 [*] Use `X | None` for type annotations
+    --> src/click/core.py:1003:20
+     |
+1001 |         self,
+1002 |         args: t.Optional[t.Sequence[str]] = None,
+1003 |         prog_name: t.Optional[str] = None,
+     |                    ^^^^^^^^^^^^^^^
+1004 |         complete_var: t.Optional[str] = None,
+1005 |         standalone_mode: bool = ...,
+     |
+help: Convert to `X | None`
+     |
+1002 |         args: t.Optional[t.Sequence[str]] = None,
+     -         prog_name: t.Optional[str] = None,
+1003 +         prog_name: str | None = None,
+1004 |         complete_var: t.Optional[str] = None,
+     |
+
+UP045 [*] Use `X | None` for type annotations
+    --> src/click/core.py:1004:23
+     |
+1002 |         args: t.Optional[t.Sequence[str]] = None,
+1003 |         prog_name: t.Optional[str] = None,
+1004 |         complete_var: t.Optional[str] = None,
+     |                       ^^^^^^^^^^^^^^^
+1005 |         standalone_mode: bool = ...,
+1006 |         **extra: t.Any,
+     |
+help: Convert to `X | None`
+     |
+1003 |         prog_name: t.Optional[str] = None,
+     -         complete_var: t.Optional[str] = None,
+1004 +         complete_var: str | None = None,
+1005 |         standalone_mode: bool = ...,
+     |
+
+UP045 [*] Use `X | None` for type annotations
+    --> src/click/core.py:1012:15
+     |
+1010 |     def main(
+1011 |         self,
+1012 |         args: t.Optional[t.Sequence[str]] = None,
+     |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+1013 |         prog_name: t.Optional[str] = None,
+1014 |         complete_var: t.Optional[str] = None,
+     |
+help: Convert to `X | None`
+     |
+1011 |         self,
+     -         args: t.Optional[t.Sequence[str]] = None,
+1012 +         args: t.Sequence[str] | None = None,
+1013 |         prog_name: t.Optional[str] = None,
+     |
+
+UP045 [*] Use `X | None` for type annotations
+    --> src/click/core.py:1013:20
+     |
+1011 |         self,
+1012 |         args: t.Optional[t.Sequence[str]] = None,
+1013 |         prog_name: t.Optional[str] = None,
+     |                    ^^^^^^^^^^^^^^^
+1014 |         complete_var: t.Optional[str] = None,
+1015 |         standalone_mode: bool = True,
+     |
+help: Convert to `X | None`
+     |
+1012 |         args: t.Optional[t.Sequence[str]] = None,
+     -         prog_name: t.Optional[str] = None,
+1013 +         prog_name: str | None = None,
+1014 |         complete_var: t.Optional[str] = None,
+     |
+
+UP045 [*] Use `X | None` for type annotations
+    --> src/click/core.py:1014:23
+     |
+1012 |         args: t.Optional[t.Sequence[str]] = None,
+1013 |         prog_name: t.Optional[str] = None,
+1014 |         complete_var: t.Optional[str] = None,
+     |                       ^^^^^^^^^^^^^^^
+1015 |         standalone_mode: bool = True,
+1016 |         windows_expand_args: bool = True,
+     |
+help: Convert to `X | None`
+     |
+1013 |         prog_name: t.Optional[str] = None,
+     -         complete_var: t.Optional[str] = None,
+1014 +         complete_var: str | None = None,
+1015 |         standalone_mode: bool = True,
+     |
+
+UP045 [*] Use `X | None` for type annotations
+    --> src/click/core.py:1127:23
+     |
+1125 |         ctx_args: t.MutableMapping[str, t.Any],
+1126 |         prog_name: str,
+1127 |         complete_var: t.Optional[str] = None,
+     |                       ^^^^^^^^^^^^^^^
+1128 |     ) -> None:
+1129 |         """Check if the shell is asking for tab completion, process
+     |
+help: Convert to `X | None`
+     |
+1126 |         prog_name: str,
+     -         complete_var: t.Optional[str] = None,
+1127 +         complete_var: str | None = None,
+1128 |     ) -> None:
+     |
+
+UP045 [*] Use `X | None` for type annotations
+    --> src/click/core.py:1204:15
+     |
+1202 |     def __init__(
+1203 |         self,
+1204 |         name: t.Optional[str],
+     |               ^^^^^^^^^^^^^^^
+1205 |         context_settings: t.Optional[t.MutableMapping[str, t.Any]] = None,
+1206 |         callback: t.Optional[t.Callable[..., t.Any]] = None,
+     |
+help: Convert to `X | None`
+     |
+1203 |         self,
+     -         name: t.Optional[str],
+1204 +         name: str | None,
+1205 |         context_settings: t.Optional[t.MutableMapping[str, t.Any]] = None,
+     |
+
+UP045 [*] Use `X | None` for type annotations
+    --> src/click/core.py:1205:27
+     |
+1203 |         self,
+1204 |         name: t.Optional[str],
+1205 |         context_settings: t.Optional[t.MutableMapping[str, t.Any]] = None,
+     |                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+1206 |         callback: t.Optional[t.Callable[..., t.Any]] = None,
+1207 |         params: t.Optional[t.List["Parameter"]] = None,
+     |
+help: Convert to `X | None`
+     |
+1204 |         name: t.Optional[str],
+     -         context_settings: t.Optional[t.MutableMapping[str, t.Any]] = None,
+1205 +         context_settings: t.MutableMapping[str, t.Any] | None = None,
+1206 |         callback: t.Optional[t.Callable[..., t.Any]] = None,
+     |
+
+UP045 [*] Use `X | None` for type annotations
+    --> src/click/core.py:1206:19
+     |
+1204 |         name: t.Optional[str],
+1205 |         context_settings: t.Optional[t.MutableMapping[str, t.Any]] = None,
+1206 |         callback: t.Optional[t.Callable[..., t.Any]] = None,
+     |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+1207 |         params: t.Optional[t.List["Parameter"]] = None,
+1208 |         help: t.Optional[str] = None,
+     |
+help: Convert to `X | None`
+     |
+1205 |         context_settings: t.Optional[t.MutableMapping[str, t.Any]] = None,
+     -         callback: t.Optional[t.Callable[..., t.Any]] = None,
+1206 +         callback: t.Callable[..., t.Any] | None = None,
+1207 |         params: t.Optional[t.List["Parameter"]] = None,
+     |
+
+UP045 [*] Use `X | None` for type annotations
+    --> src/click/core.py:1207:17
+     |
+1205 |         context_settings: t.Optional[t.MutableMapping[str, t.Any]] = None,
+1206 |         callback: t.Optional[t.Callable[..., t.Any]] = None,
+1207 |         params: t.Optional[t.List["Parameter"]] = None,
+     |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+1208 |         help: t.Optional[str] = None,
+1209 |         epilog: t.Optional[str] = None,
+     |
+help: Convert to `X | None`
+     |
+1206 |         callback: t.Optional[t.Callable[..., t.Any]] = None,
+     -         params: t.Optional[t.List["Parameter"]] = None,
+1207 +         params: t.List["Parameter"] | None = None,
+1208 |         help: t.Optional[str] = None,
+     |
+
+UP006 [*] Use `list` instead of `t.List` for type annotation
+    --> src/click/core.py:1207:28
+     |
+1205 |         context_settings: t.Optional[t.MutableMapping[str, t.Any]] = None,
+1206 |         callback: t.Optional[t.Callable[..., t.Any]] = None,
+1207 |         params: t.Optional[t.List["Parameter"]] = None,
+     |                            ^^^^^^
+1208 |         help: t.Optional[str] = None,
+1209 |         epilog: t.Optional[str] = None,
+     |
+help: Replace with `list`
+     |
+1206 |         callback: t.Optional[t.Callable[..., t.Any]] = None,
+     -         params: t.Optional[t.List["Parameter"]] = None,
+1207 +         params: t.Optional[list["Parameter"]] = None,
+1208 |         help: t.Optional[str] = None,
+     |
+
+UP045 [*] Use `X | None` for type annotations
+    --> src/click/core.py:1208:15
+     |
+1206 |         callback: t.Optional[t.Callable[..., t.Any]] = None,
+1207 |         params: t.Optional[t.List["Parameter"]] = None,
+1208 |         help: t.Optional[str] = None,
+     |               ^^^^^^^^^^^^^^^
+1209 |         epilog: t.Optional[str] = None,
+1210 |         short_help: t.Optional[str] = None,
+     |
+help: Convert to `X | None`
+     |
+1207 |         params: t.Optional[t.List["Parameter"]] = None,
+     -         help: t.Optional[str] = None,
+1208 +         help: str | None = None,
+1209 |         epilog: t.Optional[str] = None,
+     |
+
+UP045 [*] Use `X | None` for type annotations
+    --> src/click/core.py:1209:17
+     |
+1207 |         params: t.Optional[t.List["Parameter"]] = None,
+1208 |         help: t.Optional[str] = None,
+1209 |         epilog: t.Optional[str] = None,
+     |                 ^^^^^^^^^^^^^^^
+1210 |         short_help: t.Optional[str] = None,
+1211 |         options_metavar: t.Optional[str] = "[OPTIONS]",
+     |
+help: Convert to `X | None`
+     |
+1208 |         help: t.Optional[str] = None,
+     -         epilog: t.Optional[str] = None,
+1209 +         epilog: str | None = None,
+1210 |         short_help: t.Optional[str] = None,
+     |
+
+UP045 [*] Use `X | None` for type annotations
+    --> src/click/core.py:1210:21
+     |
+1208 |         help: t.Optional[str] = None,
+1209 |         epilog: t.Optional[str] = None,
+1210 |         short_help: t.Optional[str] = None,
+     |                     ^^^^^^^^^^^^^^^
+1211 |         options_metavar: t.Optional[str] = "[OPTIONS]",
+1212 |         add_help_option: bool = True,
+     |
+help: Convert to `X | None`
+     |
+1209 |         epilog: t.Optional[str] = None,
+     -         short_help: t.Optional[str] = None,
+1210 +         short_help: str | None = None,
+1211 |         options_metavar: t.Optional[str] = "[OPTIONS]",
+     |
+
+UP045 [*] Use `X | None` for type annotations
+    --> src/click/core.py:1211:26
+     |
+1209 |         epilog: t.Optional[str] = None,
+1210 |         short_help: t.Optional[str] = None,
+1211 |         options_metavar: t.Optional[str] = "[OPTIONS]",
+     |                          ^^^^^^^^^^^^^^^
+1212 |         add_help_option: bool = True,
+1213 |         no_args_is_help: bool = False,
+     |
+help: Convert to `X | None`
+     |
+1210 |         short_help: t.Optional[str] = None,
+     -         options_metavar: t.Optional[str] = "[OPTIONS]",
+1211 +         options_metavar: str | None = "[OPTIONS]",
+1212 |         add_help_option: bool = True,
+     |
+
+UP006 [*] Use `list` instead of `t.List` for type annotation
+    --> src/click/core.py:1224:22
+     |
+1222 |         #: should show up in the help page and execute.  Eager parameters
+1223 |         #: will automatically be handled before non eager ones.
+1224 |         self.params: t.List["Parameter"] = params or []
+     |                      ^^^^^^
+1225 |         self.help = help
+1226 |         self.epilog = epilog
+     |
+help: Replace with `list`
+     |
+1223 |         #: will automatically be handled before non eager ones.
+     -         self.params: t.List["Parameter"] = params or []
+1224 +         self.params: list["Parameter"] = params or []
+1225 |         self.help = help
+     |
+
+UP037 [*] Remove quotes from type annotation
+    --> src/click/core.py:1224:29
+     |
+1222 |         #: should show up in the help page and execute.  Eager parameters
+1223 |         #: will automatically be handled before non eager ones.
+1224 |         self.params: t.List["Parameter"] = params or []
+     |                             ^^^^^^^^^^^
+1225 |         self.help = help
+1226 |         self.epilog = epilog
+     |
+help: Remove quotes
+     |
+1223 |         #: will automatically be handled before non eager ones.
+     -         self.params: t.List["Parameter"] = params or []
+1224 +         self.params: t.List[Parameter] = params or []
+1225 |         self.help = help
+     |
+
+UP006 [*] Use `dict` instead of `t.Dict` for type annotation
+    --> src/click/core.py:1234:45
+     |
+1232 |         self.deprecated = deprecated
+1233 |
+1234 |     def to_info_dict(self, ctx: Context) -> t.Dict[str, t.Any]:
+     |                                             ^^^^^^
+1235 |         info_dict = super().to_info_dict(ctx)
+1236 |         info_dict.update(
+     |
+help: Replace with `dict`
+     |
+1233 |
+     -     def to_info_dict(self, ctx: Context) -> t.Dict[str, t.Any]:
+1234 +     def to_info_dict(self, ctx: Context) -> dict[str, t.Any]:
+1235 |         info_dict = super().to_info_dict(ctx)
+     |
+
+UP006 [*] Use `list` instead of `t.List` for type annotation
+    --> src/click/core.py:1255:43
+     |
+1253 |         return formatter.getvalue().rstrip("\n")
+1254 |
+1255 |     def get_params(self, ctx: Context) -> t.List["Parameter"]:
+     |                                           ^^^^^^
+1256 |         rv = self.params
+1257 |         help_option = self.get_help_option(ctx)
+     |
+help: Replace with `list`
+     |
+1254 |
+     -     def get_params(self, ctx: Context) -> t.List["Parameter"]:
+1255 +     def get_params(self, ctx: Context) -> list["Parameter"]:
+1256 |         rv = self.params
+     |
+
+UP006 [*] Use `list` instead of `t.List` for type annotation
+    --> src/click/core.py:1272:53
+     |
+1270 |         formatter.write_usage(ctx.command_path, " ".join(pieces))
+1271 |
+1272 |     def collect_usage_pieces(self, ctx: Context) -> t.List[str]:
+     |                                                     ^^^^^^
+1273 |         """Returns all the pieces that go into the usage line and returns
+1274 |         it as a list of strings.
+     |
+help: Replace with `list`
+     |
+1271 |
+     -     def collect_usage_pieces(self, ctx: Context) -> t.List[str]:
+1272 +     def collect_usage_pieces(self, ctx: Context) -> list[str]:
+1273 |         """Returns all the pieces that go into the usage line and returns
+     |
+
+UP006 [*] Use `list` instead of `t.List` for type annotation
+    --> src/click/core.py:1283:54
+     |
+1281 |         return rv
+1282 |
+1283 |     def get_help_option_names(self, ctx: Context) -> t.List[str]:
+     |                                                      ^^^^^^
+1284 |         """Returns the names for the help option."""
+1285 |         all_names = set(ctx.help_option_names)
+     |
+help: Replace with `list`
+     |
+1282 |
+     -     def get_help_option_names(self, ctx: Context) -> t.List[str]:
+1283 +     def get_help_option_names(self, ctx: Context) -> list[str]:
+1284 |         """Returns the names for the help option."""
+     |
+
+UP006 [*] Use `list` instead of `t.List` for type annotation
+    --> src/click/core.py:1399:46
+     |
+1397 |                 formatter.write_text(epilog)
+1398 |
+1399 |     def parse_args(self, ctx: Context, args: t.List[str]) -> t.List[str]:
+     |                                              ^^^^^^
+1400 |         if not args and self.no_args_is_help and not ctx.resilient_parsing:
+1401 |             echo(ctx.get_help(), color=ctx.color)
+     |
+help: Replace with `list`
+     |
+1398 |
+     -     def parse_args(self, ctx: Context, args: t.List[str]) -> t.List[str]:
+1399 +     def parse_args(self, ctx: Context, args: list[str]) -> t.List[str]:
+1400 |         if not args and self.no_args_is_help and not ctx.resilient_parsing:
+     |
+
+UP006 [*] Use `list` instead of `t.List` for type annotation
+    --> src/click/core.py:1399:62
+     |
+1397 |                 formatter.write_text(epilog)
+1398 |
+1399 |     def parse_args(self, ctx: Context, args: t.List[str]) -> t.List[str]:
+     |                                                              ^^^^^^
+1400 |         if not args and self.no_args_is_help and not ctx.resilient_parsing:
+1401 |             echo(ctx.get_help(), color=ctx.color)
+     |
+help: Replace with `list`
+     |
+1398 |
+     -     def parse_args(self, ctx: Context, args: t.List[str]) -> t.List[str]:
+1399 +     def parse_args(self, ctx: Context, args: t.List[str]) -> list[str]:
+1400 |         if not args and self.no_args_is_help and not ctx.resilient_parsing:
+     |
+
+RUF059 Unpacked variable `value` is never used
+    --> src/click/core.py:1408:13
+     |
+1407 |         for param in iter_params_for_processing(param_order, self.get_params(ctx)):
+1408 |             value, args = param.handle_parse_result(ctx, opts, args)
+     |             ^^^^^
+1409 |
+1410 |         if args and not ctx.allow_extra_args and not ctx.resilient_parsing:
+     |
+help: Prefix it with an underscore or any other dummy variable pattern
+
+UP006 [*] Use `list` instead of `t.List` for type annotation
+    --> src/click/core.py:1436:64
+     |
+1434 |             return ctx.invoke(self.callback, **ctx.params)
+1435 |
+1436 |     def shell_complete(self, ctx: Context, incomplete: str) -> t.List["CompletionItem"]:
+     |                                                                ^^^^^^
+1437 |         """Return a list of completions for the incomplete value. Looks
+1438 |         at the names of options and chained multi-commands.
+     |
+help: Replace with `list`
+     |
+1435 |
+     -     def shell_complete(self, ctx: Context, incomplete: str) -> t.List["CompletionItem"]:
+1436 +     def shell_complete(self, ctx: Context, incomplete: str) -> list["CompletionItem"]:
+1437 |         """Return a list of completions for the incomplete value. Looks
+     |
+
+UP006 [*] Use `list` instead of `t.List` for type annotation
+    --> src/click/core.py:1447:18
+     |
+1445 |         from click.shell_completion import CompletionItem
+1446 |
+1447 |         results: t.List["CompletionItem"] = []
+     |                  ^^^^^^
+1448 |
+1449 |         if incomplete and not incomplete[0].isalnum():
+     |
+help: Replace with `list`
+     |
+1446 |
+     -         results: t.List["CompletionItem"] = []
+1447 +         results: list["CompletionItem"] = []
+1448 |
+     |
+
+UP037 [*] Remove quotes from type annotation
+    --> src/click/core.py:1447:25
+     |
+1445 |         from click.shell_completion import CompletionItem
+1446 |
+1447 |         results: t.List["CompletionItem"] = []
+     |                         ^^^^^^^^^^^^^^^^
+1448 |
+1449 |         if incomplete and not incomplete[0].isalnum():
+     |
+help: Remove quotes
+     |
+1446 |
+     -         results: t.List["CompletionItem"] = []
+1447 +         results: t.List[CompletionItem] = []
+1448 |
+     |
+
+UP045 [*] Use `X | None` for type annotations
+    --> src/click/core.py:1503:15
+     |
+1501 |     def __init__(
+1502 |         self,
+1503 |         name: t.Optional[str] = None,
+     |               ^^^^^^^^^^^^^^^
+1504 |         invoke_without_command: bool = False,
+1505 |         no_args_is_help: t.Optional[bool] = None,
+     |
+help: Convert to `X | None`
+     |
+1502 |         self,
+     -         name: t.Optional[str] = None,
+1503 +         name: str | None = None,
+1504 |         invoke_without_command: bool = False,
+     |
+
+UP045 [*] Use `X | None` for type annotations
+    --> src/click/core.py:1505:26
+     |
+1503 |         name: t.Optional[str] = None,
+1504 |         invoke_without_command: bool = False,
+1505 |         no_args_is_help: t.Optional[bool] = None,
+     |                          ^^^^^^^^^^^^^^^^
+1506 |         subcommand_metavar: t.Optional[str] = None,
+1507 |         chain: bool = False,
+     |
+help: Convert to `X | None`
+     |
+1504 |         invoke_without_command: bool = False,
+     -         no_args_is_help: t.Optional[bool] = None,
+1505 +         no_args_is_help: bool | None = None,
+1506 |         subcommand_metavar: t.Optional[str] = None,
+     |
+
+UP045 [*] Use `X | None` for type annotations
+    --> src/click/core.py:1506:29
+     |
+1504 |         invoke_without_command: bool = False,
+1505 |         no_args_is_help: t.Optional[bool] = None,
+1506 |         subcommand_metavar: t.Optional[str] = None,
+     |                             ^^^^^^^^^^^^^^^
+1507 |         chain: bool = False,
+1508 |         result_callback: t.Optional[t.Callable[..., t.Any]] = None,
+     |
+help: Convert to `X | None`
+     |
+1505 |         no_args_is_help: t.Optional[bool] = None,
+     -         subcommand_metavar: t.Optional[str] = None,
+1506 +         subcommand_metavar: str | None = None,
+1507 |         chain: bool = False,
+     |
+
+UP045 [*] Use `X | None` for type annotations
+    --> src/click/core.py:1508:26
+     |
+1506 |         subcommand_metavar: t.Optional[str] = None,
+1507 |         chain: bool = False,
+1508 |         result_callback: t.Optional[t.Callable[..., t.Any]] = None,
+     |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+1509 |         **attrs: t.Any,
+1510 |     ) -> None:
+     |
+help: Convert to `X | None`
+     |
+1507 |         chain: bool = False,
+     -         result_callback: t.Optional[t.Callable[..., t.Any]] = None,
+1508 +         result_callback: t.Callable[..., t.Any] | None = None,
+1509 |         **attrs: t.Any,
+     |
+
+UP006 [*] Use `dict` instead of `t.Dict` for type annotation
+    --> src/click/core.py:1539:45
+     |
+1537 |                     )
+1538 |
+1539 |     def to_info_dict(self, ctx: Context) -> t.Dict[str, t.Any]:
+     |                                             ^^^^^^
+1540 |         info_dict = super().to_info_dict(ctx)
+1541 |         commands = {}
+     |
+help: Replace with `dict`
+     |
+1538 |
+     -     def to_info_dict(self, ctx: Context) -> t.Dict[str, t.Any]:
+1539 +     def to_info_dict(self, ctx: Context) -> dict[str, t.Any]:
+1540 |         info_dict = super().to_info_dict(ctx)
+     |
+
+UP006 [*] Use `list` instead of `t.List` for type annotation
+    --> src/click/core.py:1557:53
+     |
+1555 |         return info_dict
+1556 |
+1557 |     def collect_usage_pieces(self, ctx: Context) -> t.List[str]:
+     |                                                     ^^^^^^
+1558 |         rv = super().collect_usage_pieces(ctx)
+1559 |         rv.append(self.subcommand_metavar)
+     |
+help: Replace with `list`
+     |
+1556 |
+     -     def collect_usage_pieces(self, ctx: Context) -> t.List[str]:
+1557 +     def collect_usage_pieces(self, ctx: Context) -> list[str]:
+1558 |         rv = super().collect_usage_pieces(ctx)
+     |
+
+PYI063 Use PEP 570 syntax for positional-only parameters
+    --> src/click/core.py:1602:26
+     |
+1600 |                 return f
+1601 |
+1602 |             def function(__value, *args, **kwargs):  # type: ignore
+     |                          ^^^^^^^
+1603 |                 inner = old_callback(__value, *args, **kwargs)
+1604 |                 return f(inner, *args, **kwargs)
+     |
+help: Add `/` to function signature
+
+UP006 [*] Use `list` instead of `t.List` for type annotation
+    --> src/click/core.py:1639:46
+     |
+1637 |                     formatter.write_dl(rows)
+1638 |
+1639 |     def parse_args(self, ctx: Context, args: t.List[str]) -> t.List[str]:
+     |                                              ^^^^^^
+1640 |         if not args and self.no_args_is_help and not ctx.resilient_parsing:
+1641 |             echo(ctx.get_help(), color=ctx.color)
+     |
+help: Replace with `list`
+     |
+1638 |
+     -     def parse_args(self, ctx: Context, args: t.List[str]) -> t.List[str]:
+1639 +     def parse_args(self, ctx: Context, args: list[str]) -> t.List[str]:
+1640 |         if not args and self.no_args_is_help and not ctx.resilient_parsing:
+     |
+
+UP006 [*] Use `list` instead of `t.List` for type annotation
+    --> src/click/core.py:1639:62
+     |
+1637 |                     formatter.write_dl(rows)
+1638 |
+1639 |     def parse_args(self, ctx: Context, args: t.List[str]) -> t.List[str]:
+     |                                                              ^^^^^^
+1640 |         if not args and self.no_args_is_help and not ctx.resilient_parsing:
+1641 |             echo(ctx.get_help(), color=ctx.color)
+     |
+help: Replace with `list`
+     |
+1638 |
+     -     def parse_args(self, ctx: Context, args: t.List[str]) -> t.List[str]:
+1639 +     def parse_args(self, ctx: Context, args: t.List[str]) -> list[str]:
+1640 |         if not args and self.no_args_is_help and not ctx.resilient_parsing:
+     |
+
+UP006 [*] Use `list` instead of `t.List` for type annotation
+    --> src/click/core.py:1723:35
+     |
+1722 |     def resolve_command(
+1723 |         self, ctx: Context, args: t.List[str]
+     |                                   ^^^^^^
+1724 |     ) -> t.Tuple[t.Optional[str], t.Optional[Command], t.List[str]]:
+1725 |         cmd_name = make_str(args[0])
+     |
+help: Replace with `list`
+     |
+1722 |     def resolve_command(
+     -         self, ctx: Context, args: t.List[str]
+1723 +         self, ctx: Context, args: list[str]
+1724 |     ) -> t.Tuple[t.Optional[str], t.Optional[Command], t.List[str]]:
+     |
+
+UP006 [*] Use `tuple` instead of `t.Tuple` for type annotation
+    --> src/click/core.py:1724:10
+     |
+1722 |     def resolve_command(
+1723 |         self, ctx: Context, args: t.List[str]
+1724 |     ) -> t.Tuple[t.Optional[str], t.Optional[Command], t.List[str]]:
+     |          ^^^^^^^
+1725 |         cmd_name = make_str(args[0])
+1726 |         original_cmd_name = cmd_name
+     |
+help: Replace with `tuple`
+     |
+1723 |         self, ctx: Context, args: t.List[str]
+     -     ) -> t.Tuple[t.Optional[str], t.Optional[Command], t.List[str]]:
+1724 +     ) -> tuple[t.Optional[str], t.Optional[Command], t.List[str]]:
+1725 |         cmd_name = make_str(args[0])
+     |
+
+UP045 [*] Use `X | None` for type annotations
+    --> src/click/core.py:1724:18
+     |
+1722 |     def resolve_command(
+1723 |         self, ctx: Context, args: t.List[str]
+1724 |     ) -> t.Tuple[t.Optional[str], t.Optional[Command], t.List[str]]:
+     |                  ^^^^^^^^^^^^^^^
+1725 |         cmd_name = make_str(args[0])
+1726 |         original_cmd_name = cmd_name
+     |
+help: Convert to `X | None`
+     |
+1723 |         self, ctx: Context, args: t.List[str]
+     -     ) -> t.Tuple[t.Optional[str], t.Optional[Command], t.List[str]]:
+1724 +     ) -> t.Tuple[str | None, t.Optional[Command], t.List[str]]:
+1725 |         cmd_name = make_str(args[0])
+     |
+
+UP045 [*] Use `X | None` for type annotations
+    --> src/click/core.py:1724:35
+     |
+1722 |     def resolve_command(
+1723 |         self, ctx: Context, args: t.List[str]
+1724 |     ) -> t.Tuple[t.Optional[str], t.Optional[Command], t.List[str]]:
+     |                                   ^^^^^^^^^^^^^^^^^^^
+1725 |         cmd_name = make_str(args[0])
+1726 |         original_cmd_name = cmd_name
+     |
+help: Convert to `X | None`
+     |
+1723 |         self, ctx: Context, args: t.List[str]
+     -     ) -> t.Tuple[t.Optional[str], t.Optional[Command], t.List[str]]:
+1724 +     ) -> t.Tuple[t.Optional[str], Command | None, t.List[str]]:
+1725 |         cmd_name = make_str(args[0])
+     |
+
+UP006 [*] Use `list` instead of `t.List` for type annotation
+    --> src/click/core.py:1724:56
+     |
+1722 |     def resolve_command(
+1723 |         self, ctx: Context, args: t.List[str]
+1724 |     ) -> t.Tuple[t.Optional[str], t.Optional[Command], t.List[str]]:
+     |                                                        ^^^^^^
+1725 |         cmd_name = make_str(args[0])
+1726 |         original_cmd_name = cmd_name
+     |
+help: Replace with `list`
+     |
+1723 |         self, ctx: Context, args: t.List[str]
+     -     ) -> t.Tuple[t.Optional[str], t.Optional[Command], t.List[str]]:
+1724 +     ) -> t.Tuple[t.Optional[str], t.Optional[Command], list[str]]:
+1725 |         cmd_name = make_str(args[0])
+     |
+
+UP045 [*] Use `X | None` for type annotations
+    --> src/click/core.py:1749:59
+     |
+1747 |         return cmd_name if cmd else None, cmd, args[1:]
+1748 |
+1749 |     def get_command(self, ctx: Context, cmd_name: str) -> t.Optional[Command]:
+     |                                                           ^^^^^^^^^^^^^^^^^^^
+1750 |         """Given a context and a command name, this returns a
+1751 |         :class:`Command` object if it exists or returns `None`.
+     |
+help: Convert to `X | None`
+     |
+1748 |
+     -     def get_command(self, ctx: Context, cmd_name: str) -> t.Optional[Command]:
+1749 +     def get_command(self, ctx: Context, cmd_name: str) -> Command | None:
+1750 |         """Given a context and a command name, this returns a
+     |
+
+UP006 [*] Use `list` instead of `t.List` for type annotation
+    --> src/click/core.py:1755:46
+     |
+1753 |         raise NotImplementedError
+1754 |
+1755 |     def list_commands(self, ctx: Context) -> t.List[str]:
+     |                                              ^^^^^^
+1756 |         """Returns a list of subcommand names in the order they should
+1757 |         appear.
+     |
+help: Replace with `list`
+     |
+1754 |
+     -     def list_commands(self, ctx: Context) -> t.List[str]:
+1755 +     def list_commands(self, ctx: Context) -> list[str]:
+1756 |         """Returns a list of subcommand names in the order they should
+     |
+
+UP006 [*] Use `list` instead of `t.List` for type annotation
+    --> src/click/core.py:1761:64
+     |
+1759 |         return []
+1760 |
+1761 |     def shell_complete(self, ctx: Context, incomplete: str) -> t.List["CompletionItem"]:
+     |                                                                ^^^^^^
+1762 |         """Return a list of completions for the incomplete value. Looks
+1763 |         at the names of options, subcommands, and chained
+     |
+help: Replace with `list`
+     |
+1760 |
+     -     def shell_complete(self, ctx: Context, incomplete: str) -> t.List["CompletionItem"]:
+1761 +     def shell_complete(self, ctx: Context, incomplete: str) -> list["CompletionItem"]:
+1762 |         """Return a list of completions for the incomplete value. Looks
+     |
+
+UP045 [*] Use `X | None` for type annotations
+    --> src/click/core.py:1802:20
+     |
+1800 |     #:
+1801 |     #: .. versionadded:: 8.0
+1802 |     command_class: t.Optional[t.Type[Command]] = None
+     |                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+1803 |
+1804 |     #: If set, this is used by the group's :meth:`group` decorator
+     |
+help: Convert to `X | None`
+     |
+1801 |     #: .. versionadded:: 8.0
+     -     command_class: t.Optional[t.Type[Command]] = None
+1802 +     command_class: t.Type[Command] | None = None
+1803 |
+     |
+
+UP006 [*] Use `type` instead of `t.Type` for type annotation
+    --> src/click/core.py:1802:31
+     |
+1800 |     #:
+1801 |     #: .. versionadded:: 8.0
+1802 |     command_class: t.Optional[t.Type[Command]] = None
+     |                               ^^^^^^
+1803 |
+1804 |     #: If set, this is used by the group's :meth:`group` decorator
+     |
+help: Replace with `type`
+     |
+1801 |     #: .. versionadded:: 8.0
+     -     command_class: t.Optional[t.Type[Command]] = None
+1802 +     command_class: t.Optional[type[Command]] = None
+1803 |
+     |
+
+UP045 [*] Use `X | None` for type annotations
+    --> src/click/core.py:1814:18
+     |
+1812 |     #:
+1813 |     #: .. versionadded:: 8.0
+1814 |     group_class: t.Optional[t.Union[t.Type["Group"], t.Type[type]]] = None
+     |                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+1815 |     # Literal[type] isn't valid, so use Type[type]
+     |
+help: Convert to `X | None`
+     |
+1813 |     #: .. versionadded:: 8.0
+     -     group_class: t.Optional[t.Union[t.Type["Group"], t.Type[type]]] = None
+1814 +     group_class: t.Union[t.Type["Group"], t.Type[type]] | None = None
+1815 |     # Literal[type] isn't valid, so use Type[type]
+     |
+
+UP007 [*] Use `X | Y` for type annotations
+    --> src/click/core.py:1814:29
+     |
+1812 |     #:
+1813 |     #: .. versionadded:: 8.0
+1814 |     group_class: t.Optional[t.Union[t.Type["Group"], t.Type[type]]] = None
+     |                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+1815 |     # Literal[type] isn't valid, so use Type[type]
+     |
+help: Convert to `X | Y`
+     |
+1813 |     #: .. versionadded:: 8.0
+     -     group_class: t.Optional[t.Union[t.Type["Group"], t.Type[type]]] = None
+1814 +     group_class: t.Optional[t.Type["Group"] | t.Type[type]] = None
+1815 |     # Literal[type] isn't valid, so use Type[type]
+     |
+
+UP006 [*] Use `type` instead of `t.Type` for type annotation
+    --> src/click/core.py:1814:37
+     |
+1812 |     #:
+1813 |     #: .. versionadded:: 8.0
+1814 |     group_class: t.Optional[t.Union[t.Type["Group"], t.Type[type]]] = None
+     |                                     ^^^^^^
+1815 |     # Literal[type] isn't valid, so use Type[type]
+     |
+help: Replace with `type`
+     |
+1813 |     #: .. versionadded:: 8.0
+     -     group_class: t.Optional[t.Union[t.Type["Group"], t.Type[type]]] = None
+1814 +     group_class: t.Optional[t.Union[type["Group"], t.Type[type]]] = None
+1815 |     # Literal[type] isn't valid, so use Type[type]
+     |
+
+UP006 [*] Use `type` instead of `t.Type` for type annotation
+    --> src/click/core.py:1814:54
+     |
+1812 |     #:
+1813 |     #: .. versionadded:: 8.0
+1814 |     group_class: t.Optional[t.Union[t.Type["Group"], t.Type[type]]] = None
+     |                                                      ^^^^^^
+1815 |     # Literal[type] isn't valid, so use Type[type]
+     |
+help: Replace with `type`
+     |
+1813 |     #: .. versionadded:: 8.0
+     -     group_class: t.Optional[t.Union[t.Type["Group"], t.Type[type]]] = None
+1814 +     group_class: t.Optional[t.Union[t.Type["Group"], type[type]]] = None
+1815 |     # Literal[type] isn't valid, so use Type[type]
+     |
+
+UP045 [*] Use `X | None` for type annotations
+    --> src/click/core.py:1819:15
+     |
+1817 |     def __init__(
+1818 |         self,
+1819 |         name: t.Optional[str] = None,
+     |               ^^^^^^^^^^^^^^^
+1820 |         commands: t.Optional[
+1821 |             t.Union[t.MutableMapping[str, Command], t.Sequence[Command]]
+     |
+help: Convert to `X | None`
+     |
+1818 |         self,
+     -         name: t.Optional[str] = None,
+1819 +         name: str | None = None,
+1820 |         commands: t.Optional[
+     |
+
+UP045 [*] Use `X | None` for type annotations
+    --> src/click/core.py:1820:19
+     |
+1818 |           self,
+1819 |           name: t.Optional[str] = None,
+1820 |           commands: t.Optional[
+     |  ___________________^
+1821 | |             t.Union[t.MutableMapping[str, Command], t.Sequence[Command]]
+1822 | |         ] = None,
+     | |_________^
+1823 |           **attrs: t.Any,
+1824 |       ) -> None:
+     |
+help: Convert to `X | None`
+     |
+1819 |         name: t.Optional[str] = None,
+     -         commands: t.Optional[
+     -             t.Union[t.MutableMapping[str, Command], t.Sequence[Command]]
+     -         ] = None,
+1820 +         commands: t.Union[t.MutableMapping[str, Command], t.Sequence[Command]] | None = None,
+1821 |         **attrs: t.Any,
+     |
+
+UP007 [*] Use `X | Y` for type annotations
+    --> src/click/core.py:1821:13
+     |
+1819 |         name: t.Optional[str] = None,
+1820 |         commands: t.Optional[
+1821 |             t.Union[t.MutableMapping[str, Command], t.Sequence[Command]]
+     |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+1822 |         ] = None,
+1823 |         **attrs: t.Any,
+     |
+help: Convert to `X | Y`
+     |
+1820 |         commands: t.Optional[
+     -             t.Union[t.MutableMapping[str, Command], t.Sequence[Command]]
+1821 +             t.MutableMapping[str, Command] | t.Sequence[Command]
+1822 |         ] = None,
+     |
+
+UP045 [*] Use `X | None` for type annotations
+    --> src/click/core.py:1835:47
+     |
+1833 |         self.commands: t.MutableMapping[str, Command] = commands
+1834 |
+1835 |     def add_command(self, cmd: Command, name: t.Optional[str] = None) -> None:
+     |                                               ^^^^^^^^^^^^^^^
+1836 |         """Registers another :class:`Command` with this group.  If the name
+1837 |         is not provided, the name of the command is used.
+     |
+help: Convert to `X | None`
+     |
+1834 |
+     -     def add_command(self, cmd: Command, name: t.Optional[str] = None) -> None:
+1835 +     def add_command(self, cmd: Command, name: str | None = None) -> None:
+1836 |         """Registers another :class:`Command` with this group.  If the name
+     |
+
+PYI063 Use PEP 570 syntax for positional-only parameters
+    --> src/click/core.py:1846:23
+     |
+1845 |     @t.overload
+1846 |     def command(self, __func: t.Callable[..., t.Any]) -> Command:
+     |                       ^^^^^^
+1847 |         ...
+     |
+help: Add `/` to function signature
+
+UP007 [*] Use `X | Y` for type annotations
+    --> src/click/core.py:1857:10
+     |
+1855 |     def command(
+1856 |         self, *args: t.Any, **kwargs: t.Any
+1857 |     ) -> t.Union[t.Callable[[t.Callable[..., t.Any]], Command], Command]:
+     |          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+1858 |         """A shortcut decorator for declaring and attaching a command to
+1859 |         the group. This takes the same arguments as :func:`command` and
+     |
+help: Convert to `X | Y`
+     |
+1856 |         self, *args: t.Any, **kwargs: t.Any
+     -     ) -> t.Union[t.Callable[[t.Callable[..., t.Any]], Command], Command]:
+1857 +     ) -> t.Callable[[t.Callable[..., t.Any]], Command] | Command:
+1858 |         """A shortcut decorator for declaring and attaching a command to
+     |
+
+UP045 [*] Use `X | None` for type annotations
+    --> src/click/core.py:1874:15
+     |
+1872 |         from .decorators import command
+1873 |
+1874 |         func: t.Optional[t.Callable[..., t.Any]] = None
+     |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+1875 |
+1876 |         if args and callable(args[0]):
+     |
+help: Convert to `X | None`
+     |
+1873 |
+     -         func: t.Optional[t.Callable[..., t.Any]] = None
+1874 +         func: t.Callable[..., t.Any] | None = None
+1875 |
+     |
+
+PYI063 Use PEP 570 syntax for positional-only parameters
+    --> src/click/core.py:1896:21
+     |
+1895 |     @t.overload
+1896 |     def group(self, __func: t.Callable[..., t.Any]) -> "Group":
+     |                     ^^^^^^
+1897 |         ...
+     |
+help: Add `/` to function signature
+
+UP045 [*] Use `X | None` for type annotations
+    --> src/click/core.py:1924:15
+     |
+1922 |         from .decorators import group
+1923 |
+1924 |         func: t.Optional[t.Callable[..., t.Any]] = None
+     |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+1925 |
+1926 |         if args and callable(args[0]):
+     |
+help: Convert to `X | None`
+     |
+1923 |
+     -         func: t.Optional[t.Callable[..., t.Any]] = None
+1924 +         func: t.Callable[..., t.Any] | None = None
+1925 |
+     |
+
+UP045 [*] Use `X | None` for type annotations
+    --> src/click/core.py:1948:59
+     |
+1946 |         return decorator
+1947 |
+1948 |     def get_command(self, ctx: Context, cmd_name: str) -> t.Optional[Command]:
+     |                                                           ^^^^^^^^^^^^^^^^^^^
+1949 |         return self.commands.get(cmd_name)
+     |
+help: Convert to `X | None`
+     |
+1947 |
+     -     def get_command(self, ctx: Context, cmd_name: str) -> t.Optional[Command]:
+1948 +     def get_command(self, ctx: Context, cmd_name: str) -> Command | None:
+1949 |         return self.commands.get(cmd_name)
+     |
+
+UP006 [*] Use `list` instead of `t.List` for type annotation
+    --> src/click/core.py:1951:46
+     |
+1949 |         return self.commands.get(cmd_name)
+1950 |
+1951 |     def list_commands(self, ctx: Context) -> t.List[str]:
+     |                                              ^^^^^^
+1952 |         return sorted(self.commands)
+     |
+help: Replace with `list`
+     |
+1950 |
+     -     def list_commands(self, ctx: Context) -> t.List[str]:
+1951 +     def list_commands(self, ctx: Context) -> list[str]:
+1952 |         return sorted(self.commands)
+     |
+
+UP045 [*] Use `X | None` for type annotations
+    --> src/click/core.py:1967:15
+     |
+1965 |     def __init__(
+1966 |         self,
+1967 |         name: t.Optional[str] = None,
+     |               ^^^^^^^^^^^^^^^
+1968 |         sources: t.Optional[t.List[MultiCommand]] = None,
+1969 |         **attrs: t.Any,
+     |
+help: Convert to `X | None`
+     |
+1966 |         self,
+     -         name: t.Optional[str] = None,
+1967 +         name: str | None = None,
+1968 |         sources: t.Optional[t.List[MultiCommand]] = None,
+     |
+
+UP045 [*] Use `X | None` for type annotations
+    --> src/click/core.py:1968:18
+     |
+1966 |         self,
+1967 |         name: t.Optional[str] = None,
+1968 |         sources: t.Optional[t.List[MultiCommand]] = None,
+     |                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+1969 |         **attrs: t.Any,
+1970 |     ) -> None:
+     |
+help: Convert to `X | None`
+     |
+1967 |         name: t.Optional[str] = None,
+     -         sources: t.Optional[t.List[MultiCommand]] = None,
+1968 +         sources: t.List[MultiCommand] | None = None,
+1969 |         **attrs: t.Any,
+     |
+
+UP006 [*] Use `list` instead of `t.List` for type annotation
+    --> src/click/core.py:1968:29
+     |
+1966 |         self,
+1967 |         name: t.Optional[str] = None,
+1968 |         sources: t.Optional[t.List[MultiCommand]] = None,
+     |                             ^^^^^^
+1969 |         **attrs: t.Any,
+1970 |     ) -> None:
+     |
+help: Replace with `list`
+     |
+1967 |         name: t.Optional[str] = None,
+     -         sources: t.Optional[t.List[MultiCommand]] = None,
+1968 +         sources: t.Optional[list[MultiCommand]] = None,
+1969 |         **attrs: t.Any,
+     |
+
+UP006 [*] Use `list` instead of `t.List` for type annotation
+    --> src/click/core.py:1973:23
+     |
+1971 |         super().__init__(name, **attrs)
+1972 |         #: The list of registered multi commands.
+1973 |         self.sources: t.List[MultiCommand] = sources or []
+     |                       ^^^^^^
+1974 |
+1975 |     def add_source(self, multi_cmd: MultiCommand) -> None:
+     |
+help: Replace with `list`
+     |
+1972 |         #: The list of registered multi commands.
+     -         self.sources: t.List[MultiCommand] = sources or []
+1973 +         self.sources: list[MultiCommand] = sources or []
+1974 |
+     |
+
+UP045 [*] Use `X | None` for type annotations
+    --> src/click/core.py:1979:59
+     |
+1977 |         self.sources.append(multi_cmd)
+1978 |
+1979 |     def get_command(self, ctx: Context, cmd_name: str) -> t.Optional[Command]:
+     |                                                           ^^^^^^^^^^^^^^^^^^^
+1980 |         for source in self.sources:
+1981 |             rv = source.get_command(ctx, cmd_name)
+     |
+help: Convert to `X | None`
+     |
+1978 |
+     -     def get_command(self, ctx: Context, cmd_name: str) -> t.Optional[Command]:
+1979 +     def get_command(self, ctx: Context, cmd_name: str) -> Command | None:
+1980 |         for source in self.sources:
+     |
+
+UP006 [*] Use `list` instead of `t.List` for type annotation
+    --> src/click/core.py:1991:46
+     |
+1989 |         return None
+1990 |
+1991 |     def list_commands(self, ctx: Context) -> t.List[str]:
+     |                                              ^^^^^^
+1992 |         rv: t.Set[str] = set()
+     |
+help: Replace with `list`
+     |
+1990 |
+     -     def list_commands(self, ctx: Context) -> t.List[str]:
+1991 +     def list_commands(self, ctx: Context) -> list[str]:
+1992 |         rv: t.Set[str] = set()
+     |
+
+UP006 [*] Use `set` instead of `t.Set` for type annotation
+    --> src/click/core.py:1992:13
+     |
+1991 |     def list_commands(self, ctx: Context) -> t.List[str]:
+1992 |         rv: t.Set[str] = set()
+     |             ^^^^^
+1993 |
+1994 |         for source in self.sources:
+     |
+help: Replace with `set`
+     |
+1991 |     def list_commands(self, ctx: Context) -> t.List[str]:
+     -         rv: t.Set[str] = set()
+1992 +         rv: set[str] = set()
+1993 |
+     |
+
+UP045 [*] Use `X | None` for type annotations
+    --> src/click/core.py:2088:22
+     |
+2086 |     def __init__(
+2087 |         self,
+2088 |         param_decls: t.Optional[t.Sequence[str]] = None,
+     |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2089 |         type: t.Optional[t.Union[types.ParamType, t.Any]] = None,
+2090 |         required: bool = False,
+     |
+help: Convert to `X | None`
+     |
+2087 |         self,
+     -         param_decls: t.Optional[t.Sequence[str]] = None,
+2088 +         param_decls: t.Sequence[str] | None = None,
+2089 |         type: t.Optional[t.Union[types.ParamType, t.Any]] = None,
+     |
+
+UP045 [*] Use `X | None` for type annotations
+    --> src/click/core.py:2089:15
+     |
+2087 |         self,
+2088 |         param_decls: t.Optional[t.Sequence[str]] = None,
+2089 |         type: t.Optional[t.Union[types.ParamType, t.Any]] = None,
+     |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2090 |         required: bool = False,
+2091 |         default: t.Optional[t.Union[t.Any, t.Callable[[], t.Any]]] = None,
+     |
+help: Convert to `X | None`
+     |
+2088 |         param_decls: t.Optional[t.Sequence[str]] = None,
+     -         type: t.Optional[t.Union[types.ParamType, t.Any]] = None,
+2089 +         type: t.Union[types.ParamType, t.Any] | None = None,
+2090 |         required: bool = False,
+     |
+
+UP007 [*] Use `X | Y` for type annotations
+    --> src/click/core.py:2089:26
+     |
+2087 |         self,
+2088 |         param_decls: t.Optional[t.Sequence[str]] = None,
+2089 |         type: t.Optional[t.Union[types.ParamType, t.Any]] = None,
+     |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2090 |         required: bool = False,
+2091 |         default: t.Optional[t.Union[t.Any, t.Callable[[], t.Any]]] = None,
+     |
+help: Convert to `X | Y`
+     |
+2088 |         param_decls: t.Optional[t.Sequence[str]] = None,
+     -         type: t.Optional[t.Union[types.ParamType, t.Any]] = None,
+2089 +         type: t.Optional[types.ParamType | t.Any] = None,
+2090 |         required: bool = False,
+     |
+
+UP045 [*] Use `X | None` for type annotations
+    --> src/click/core.py:2091:18
+     |
+2089 |         type: t.Optional[t.Union[types.ParamType, t.Any]] = None,
+2090 |         required: bool = False,
+2091 |         default: t.Optional[t.Union[t.Any, t.Callable[[], t.Any]]] = None,
+     |                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2092 |         callback: t.Optional[t.Callable[[Context, "Parameter", t.Any], t.Any]] = None,
+2093 |         nargs: t.Optional[int] = None,
+     |
+help: Convert to `X | None`
+     |
+2090 |         required: bool = False,
+     -         default: t.Optional[t.Union[t.Any, t.Callable[[], t.Any]]] = None,
+2091 +         default: t.Union[t.Any, t.Callable[[], t.Any]] | None = None,
+2092 |         callback: t.Optional[t.Callable[[Context, "Parameter", t.Any], t.Any]] = None,
+     |
+
+UP007 [*] Use `X | Y` for type annotations
+    --> src/click/core.py:2091:29
+     |
+2089 |         type: t.Optional[t.Union[types.ParamType, t.Any]] = None,
+2090 |         required: bool = False,
+2091 |         default: t.Optional[t.Union[t.Any, t.Callable[[], t.Any]]] = None,
+     |                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2092 |         callback: t.Optional[t.Callable[[Context, "Parameter", t.Any], t.Any]] = None,
+2093 |         nargs: t.Optional[int] = None,
+     |
+help: Convert to `X | Y`
+     |
+2090 |         required: bool = False,
+     -         default: t.Optional[t.Union[t.Any, t.Callable[[], t.Any]]] = None,
+2091 +         default: t.Optional[t.Any | t.Callable[[], t.Any]] = None,
+2092 |         callback: t.Optional[t.Callable[[Context, "Parameter", t.Any], t.Any]] = None,
+     |
+
+UP045 [*] Use `X | None` for type annotations
+    --> src/click/core.py:2092:19
+     |
+2090 |         required: bool = False,
+2091 |         default: t.Optional[t.Union[t.Any, t.Callable[[], t.Any]]] = None,
+2092 |         callback: t.Optional[t.Callable[[Context, "Parameter", t.Any], t.Any]] = None,
+     |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2093 |         nargs: t.Optional[int] = None,
+2094 |         multiple: bool = False,
+     |
+help: Convert to `X | None`
+     |
+2091 |         default: t.Optional[t.Union[t.Any, t.Callable[[], t.Any]]] = None,
+     -         callback: t.Optional[t.Callable[[Context, "Parameter", t.Any], t.Any]] = None,
+2092 +         callback: t.Callable[[Context, "Parameter", t.Any], t.Any] | None = None,
+2093 |         nargs: t.Optional[int] = None,
+     |
+
+UP045 [*] Use `X | None` for type annotations
+    --> src/click/core.py:2093:16
+     |
+2091 |         default: t.Optional[t.Union[t.Any, t.Callable[[], t.Any]]] = None,
+2092 |         callback: t.Optional[t.Callable[[Context, "Parameter", t.Any], t.Any]] = None,
+2093 |         nargs: t.Optional[int] = None,
+     |                ^^^^^^^^^^^^^^^
+2094 |         multiple: bool = False,
+2095 |         metavar: t.Optional[str] = None,
+     |
+help: Convert to `X | None`
+     |
+2092 |         callback: t.Optional[t.Callable[[Context, "Parameter", t.Any], t.Any]] = None,
+     -         nargs: t.Optional[int] = None,
+2093 +         nargs: int | None = None,
+2094 |         multiple: bool = False,
+     |
+
+UP045 [*] Use `X | None` for type annotations
+    --> src/click/core.py:2095:18
+     |
+2093 |         nargs: t.Optional[int] = None,
+2094 |         multiple: bool = False,
+2095 |         metavar: t.Optional[str] = None,
+     |                  ^^^^^^^^^^^^^^^
+2096 |         expose_value: bool = True,
+2097 |         is_eager: bool = False,
+     |
+help: Convert to `X | None`
+     |
+2094 |         multiple: bool = False,
+     -         metavar: t.Optional[str] = None,
+2095 +         metavar: str | None = None,
+2096 |         expose_value: bool = True,
+     |
+
+UP045 [*] Use `X | None` for type annotations
+    --> src/click/core.py:2098:17
+     |
+2096 |         expose_value: bool = True,
+2097 |         is_eager: bool = False,
+2098 |         envvar: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+     |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2099 |         shell_complete: t.Optional[
+2100 |             t.Callable[
+     |
+help: Convert to `X | None`
+     |
+2097 |         is_eager: bool = False,
+     -         envvar: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+2098 +         envvar: t.Union[str, t.Sequence[str]] | None = None,
+2099 |         shell_complete: t.Optional[
+     |
+
+UP007 [*] Use `X | Y` for type annotations
+    --> src/click/core.py:2098:28
+     |
+2096 |         expose_value: bool = True,
+2097 |         is_eager: bool = False,
+2098 |         envvar: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+     |                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2099 |         shell_complete: t.Optional[
+2100 |             t.Callable[
+     |
+help: Convert to `X | Y`
+     |
+2097 |         is_eager: bool = False,
+     -         envvar: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+2098 +         envvar: t.Optional[str | t.Sequence[str]] = None,
+2099 |         shell_complete: t.Optional[
+     |
+
+UP045 [*] Use `X | None` for type annotations
+    --> src/click/core.py:2099:25
+     |
+2097 |           is_eager: bool = False,
+2098 |           envvar: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+2099 |           shell_complete: t.Optional[
+     |  _________________________^
+2100 | |             t.Callable[
+2101 | |                 [Context, "Parameter", str],
+2102 | |                 t.Union[t.List["CompletionItem"], t.List[str]],
+2103 | |             ]
+2104 | |         ] = None,
+     | |_________^
+2105 |       ) -> None:
+2106 |           self.name: t.Optional[str]
+     |
+help: Convert to `X | None`
+     |
+2098 |         envvar: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+     -         shell_complete: t.Optional[
+     -             t.Callable[
+     -                 [Context, "Parameter", str],
+     -                 t.Union[t.List["CompletionItem"], t.List[str]],
+     -             ]
+     -         ] = None,
+2099 +         shell_complete: t.Callable[[Context, "Parameter", str], t.Union[t.List["CompletionItem"], t.List[str]]] | None = None,
+2100 |     ) -> None:
+     |
+
+UP007 [*] Use `X | Y` for type annotations
+    --> src/click/core.py:2102:17
+     |
+2100 |             t.Callable[
+2101 |                 [Context, "Parameter", str],
+2102 |                 t.Union[t.List["CompletionItem"], t.List[str]],
+     |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2103 |             ]
+2104 |         ] = None,
+     |
+help: Convert to `X | Y`
+     |
+2101 |                 [Context, "Parameter", str],
+     -                 t.Union[t.List["CompletionItem"], t.List[str]],
+2102 +                 t.List["CompletionItem"] | t.List[str],
+2103 |             ]
+     |
+
+UP006 [*] Use `list` instead of `t.List` for type annotation
+    --> src/click/core.py:2102:25
+     |
+2100 |             t.Callable[
+2101 |                 [Context, "Parameter", str],
+2102 |                 t.Union[t.List["CompletionItem"], t.List[str]],
+     |                         ^^^^^^
+2103 |             ]
+2104 |         ] = None,
+     |
+help: Replace with `list`
+     |
+2101 |                 [Context, "Parameter", str],
+     -                 t.Union[t.List["CompletionItem"], t.List[str]],
+2102 +                 t.Union[list["CompletionItem"], t.List[str]],
+2103 |             ]
+     |
+
+UP006 [*] Use `list` instead of `t.List` for type annotation
+    --> src/click/core.py:2102:51
+     |
+2100 |             t.Callable[
+2101 |                 [Context, "Parameter", str],
+2102 |                 t.Union[t.List["CompletionItem"], t.List[str]],
+     |                                                   ^^^^^^
+2103 |             ]
+2104 |         ] = None,
+     |
+help: Replace with `list`
+     |
+2101 |                 [Context, "Parameter", str],
+     -                 t.Union[t.List["CompletionItem"], t.List[str]],
+2102 +                 t.Union[t.List["CompletionItem"], list[str]],
+2103 |             ]
+     |
+
+UP045 [*] Use `X | None` for type annotations
+    --> src/click/core.py:2106:20
+     |
+2104 |         ] = None,
+2105 |     ) -> None:
+2106 |         self.name: t.Optional[str]
+     |                    ^^^^^^^^^^^^^^^
+2107 |         self.opts: t.List[str]
+2108 |         self.secondary_opts: t.List[str]
+     |
+help: Convert to `X | None`
+     |
+2105 |     ) -> None:
+     -         self.name: t.Optional[str]
+2106 +         self.name: str | None
+2107 |         self.opts: t.List[str]
+     |
+
+UP006 [*] Use `list` instead of `t.List` for type annotation
+    --> src/click/core.py:2107:20
+     |
+2105 |     ) -> None:
+2106 |         self.name: t.Optional[str]
+2107 |         self.opts: t.List[str]
+     |                    ^^^^^^
+2108 |         self.secondary_opts: t.List[str]
+2109 |         self.name, self.opts, self.secondary_opts = self._parse_decls(
+     |
+help: Replace with `list`
+     |
+2106 |         self.name: t.Optional[str]
+     -         self.opts: t.List[str]
+2107 +         self.opts: list[str]
+2108 |         self.secondary_opts: t.List[str]
+     |
+
+UP006 [*] Use `list` instead of `t.List` for type annotation
+    --> src/click/core.py:2108:30
+     |
+2106 |         self.name: t.Optional[str]
+2107 |         self.opts: t.List[str]
+2108 |         self.secondary_opts: t.List[str]
+     |                              ^^^^^^
+2109 |         self.name, self.opts, self.secondary_opts = self._parse_decls(
+2110 |             param_decls or (), expose_value
+     |
+help: Replace with `list`
+     |
+2107 |         self.opts: t.List[str]
+     -         self.secondary_opts: t.List[str]
+2108 +         self.secondary_opts: list[str]
+2109 |         self.name, self.opts, self.secondary_opts = self._parse_decls(
+     |
+
+UP006 [*] Use `dict` instead of `t.Dict` for type annotation
+    --> src/click/core.py:2174:31
+     |
+2172 |                         )
+2173 |
+2174 |     def to_info_dict(self) -> t.Dict[str, t.Any]:
+     |                               ^^^^^^
+2175 |         """Gather information that could be useful for a tool generating
+2176 |         user-facing documentation.
+     |
+help: Replace with `dict`
+     |
+2173 |
+     -     def to_info_dict(self) -> t.Dict[str, t.Any]:
+2174 +     def to_info_dict(self) -> dict[str, t.Any]:
+2175 |         """Gather information that could be useful for a tool generating
+     |
+
+UP006 [*] Use `tuple` instead of `t.Tuple` for type annotation
+    --> src/click/core.py:2201:10
+     |
+2199 |     def _parse_decls(
+2200 |         self, decls: t.Sequence[str], expose_value: bool
+2201 |     ) -> t.Tuple[t.Optional[str], t.List[str], t.List[str]]:
+     |          ^^^^^^^
+2202 |         raise NotImplementedError()
+     |
+help: Replace with `tuple`
+     |
+2200 |         self, decls: t.Sequence[str], expose_value: bool
+     -     ) -> t.Tuple[t.Optional[str], t.List[str], t.List[str]]:
+2201 +     ) -> tuple[t.Optional[str], t.List[str], t.List[str]]:
+2202 |         raise NotImplementedError()
+     |
+
+UP045 [*] Use `X | None` for type annotations
+    --> src/click/core.py:2201:18
+     |
+2199 |     def _parse_decls(
+2200 |         self, decls: t.Sequence[str], expose_value: bool
+2201 |     ) -> t.Tuple[t.Optional[str], t.List[str], t.List[str]]:
+     |                  ^^^^^^^^^^^^^^^
+2202 |         raise NotImplementedError()
+     |
+help: Convert to `X | None`
+     |
+2200 |         self, decls: t.Sequence[str], expose_value: bool
+     -     ) -> t.Tuple[t.Optional[str], t.List[str], t.List[str]]:
+2201 +     ) -> t.Tuple[str | None, t.List[str], t.List[str]]:
+2202 |         raise NotImplementedError()
+     |
+
+UP006 [*] Use `list` instead of `t.List` for type annotation
+    --> src/click/core.py:2201:35
+     |
+2199 |     def _parse_decls(
+2200 |         self, decls: t.Sequence[str], expose_value: bool
+2201 |     ) -> t.Tuple[t.Optional[str], t.List[str], t.List[str]]:
+     |                                   ^^^^^^
+2202 |         raise NotImplementedError()
+     |
+help: Replace with `list`
+     |
+2200 |         self, decls: t.Sequence[str], expose_value: bool
+     -     ) -> t.Tuple[t.Optional[str], t.List[str], t.List[str]]:
+2201 +     ) -> t.Tuple[t.Optional[str], list[str], t.List[str]]:
+2202 |         raise NotImplementedError()
+     |
+
+UP006 [*] Use `list` instead of `t.List` for type annotation
+    --> src/click/core.py:2201:48
+     |
+2199 |     def _parse_decls(
+2200 |         self, decls: t.Sequence[str], expose_value: bool
+2201 |     ) -> t.Tuple[t.Optional[str], t.List[str], t.List[str]]:
+     |                                                ^^^^^^
+2202 |         raise NotImplementedError()
+     |
+help: Replace with `list`
+     |
+2200 |         self, decls: t.Sequence[str], expose_value: bool
+     -     ) -> t.Tuple[t.Optional[str], t.List[str], t.List[str]]:
+2201 +     ) -> t.Tuple[t.Optional[str], t.List[str], list[str]]:
+2202 |         raise NotImplementedError()
+     |
+
+UP045 [*] Use `X | None` for type annotations
+    --> src/click/core.py:2228:10
+     |
+2226 |     def get_default(
+2227 |         self, ctx: Context, call: "te.Literal[True]" = True
+2228 |     ) -> t.Optional[t.Any]:
+     |          ^^^^^^^^^^^^^^^^^
+2229 |         ...
+     |
+help: Convert to `X | None`
+     |
+2227 |         self, ctx: Context, call: "te.Literal[True]" = True
+     -     ) -> t.Optional[t.Any]:
+2228 +     ) -> t.Any | None:
+2229 |         ...
+     |
+
+UP045 [*] Use `X | None` for type annotations
+    --> src/click/core.py:2234:10
+     |
+2232 |     def get_default(
+2233 |         self, ctx: Context, call: bool = ...
+2234 |     ) -> t.Optional[t.Union[t.Any, t.Callable[[], t.Any]]]:
+     |          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2235 |         ...
+     |
+help: Convert to `X | None`
+     |
+2233 |         self, ctx: Context, call: bool = ...
+     -     ) -> t.Optional[t.Union[t.Any, t.Callable[[], t.Any]]]:
+2234 +     ) -> t.Union[t.Any, t.Callable[[], t.Any]] | None:
+2235 |         ...
+     |
+
+UP007 [*] Use `X | Y` for type annotations
+    --> src/click/core.py:2234:21
+     |
+2232 |     def get_default(
+2233 |         self, ctx: Context, call: bool = ...
+2234 |     ) -> t.Optional[t.Union[t.Any, t.Callable[[], t.Any]]]:
+     |                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2235 |         ...
+     |
+help: Convert to `X | Y`
+     |
+2233 |         self, ctx: Context, call: bool = ...
+     -     ) -> t.Optional[t.Union[t.Any, t.Callable[[], t.Any]]]:
+2234 +     ) -> t.Optional[t.Any | t.Callable[[], t.Any]]:
+2235 |         ...
+     |
+
+UP045 [*] Use `X | None` for type annotations
+    --> src/click/core.py:2239:10
+     |
+2237 |     def get_default(
+2238 |         self, ctx: Context, call: bool = True
+2239 |     ) -> t.Optional[t.Union[t.Any, t.Callable[[], t.Any]]]:
+     |          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2240 |         """Get the default for the parameter. Tries
+2241 |         :meth:`Context.lookup_default` first, then the local default.
+     |
+help: Convert to `X | None`
+     |
+2238 |         self, ctx: Context, call: bool = True
+     -     ) -> t.Optional[t.Union[t.Any, t.Callable[[], t.Any]]]:
+2239 +     ) -> t.Union[t.Any, t.Callable[[], t.Any]] | None:
+2240 |         """Get the default for the parameter. Tries
+     |
+
+UP007 [*] Use `X | Y` for type annotations
+    --> src/click/core.py:2239:21
+     |
+2237 |     def get_default(
+2238 |         self, ctx: Context, call: bool = True
+2239 |     ) -> t.Optional[t.Union[t.Any, t.Callable[[], t.Any]]]:
+     |                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2240 |         """Get the default for the parameter. Tries
+2241 |         :meth:`Context.lookup_default` first, then the local default.
+     |
+help: Convert to `X | Y`
+     |
+2238 |         self, ctx: Context, call: bool = True
+     -     ) -> t.Optional[t.Union[t.Any, t.Callable[[], t.Any]]]:
+2239 +     ) -> t.Optional[t.Any | t.Callable[[], t.Any]]:
+2240 |         """Get the default for the parameter. Tries
+     |
+
+UP006 [*] Use `tuple` instead of `t.Tuple` for type annotation
+    --> src/click/core.py:2275:10
+     |
+2273 |     def consume_value(
+2274 |         self, ctx: Context, opts: t.Mapping[str, t.Any]
+2275 |     ) -> t.Tuple[t.Any, ParameterSource]:
+     |          ^^^^^^^
+2276 |         value = opts.get(self.name)  # type: ignore
+2277 |         source = ParameterSource.COMMANDLINE
+     |
+help: Replace with `tuple`
+     |
+2274 |         self, ctx: Context, opts: t.Mapping[str, t.Any]
+     -     ) -> t.Tuple[t.Any, ParameterSource]:
+2275 +     ) -> tuple[t.Any, ParameterSource]:
+2276 |         value = opts.get(self.name)  # type: ignore
+     |
+
+SIM103 Return the condition directly
+    --> src/click/core.py:2348:9
+     |
+2346 |               return True
+2347 |
+2348 | /         if (self.nargs != 1 or self.multiple) and value == ():
+2349 | |             return True
+2350 | |
+2351 | |         return False
+     | |____________________^
+2352 |
+2353 |       def process_value(self, ctx: Context, value: t.Any) -> t.Any:
+     |
+help: Inline condition
+
+UP045 [*] Use `X | None` for type annotations
+    --> src/click/core.py:2364:53
+     |
+2362 |         return value
+2363 |
+2364 |     def resolve_envvar_value(self, ctx: Context) -> t.Optional[str]:
+     |                                                     ^^^^^^^^^^^^^^^
+2365 |         if self.envvar is None:
+2366 |             return None
+     |
+help: Convert to `X | None`
+     |
+2363 |
+     -     def resolve_envvar_value(self, ctx: Context) -> t.Optional[str]:
+2364 +     def resolve_envvar_value(self, ctx: Context) -> str | None:
+2365 |         if self.envvar is None:
+     |
+
+UP045 [*] Use `X | None` for type annotations
+    --> src/click/core.py:2382:50
+     |
+2380 |         return None
+2381 |
+2382 |     def value_from_envvar(self, ctx: Context) -> t.Optional[t.Any]:
+     |                                                  ^^^^^^^^^^^^^^^^^
+2383 |         rv: t.Optional[t.Any] = self.resolve_envvar_value(ctx)
+     |
+help: Convert to `X | None`
+     |
+2381 |
+     -     def value_from_envvar(self, ctx: Context) -> t.Optional[t.Any]:
+2382 +     def value_from_envvar(self, ctx: Context) -> t.Any | None:
+2383 |         rv: t.Optional[t.Any] = self.resolve_envvar_value(ctx)
+     |
+
+UP045 [*] Use `X | None` for type annotations
+    --> src/click/core.py:2383:13
+     |
+2382 |     def value_from_envvar(self, ctx: Context) -> t.Optional[t.Any]:
+2383 |         rv: t.Optional[t.Any] = self.resolve_envvar_value(ctx)
+     |             ^^^^^^^^^^^^^^^^^
+2384 |
+2385 |         if rv is not None and self.nargs != 1:
+     |
+help: Convert to `X | None`
+     |
+2382 |     def value_from_envvar(self, ctx: Context) -> t.Optional[t.Any]:
+     -         rv: t.Optional[t.Any] = self.resolve_envvar_value(ctx)
+2383 +         rv: t.Any | None = self.resolve_envvar_value(ctx)
+2384 |
+     |
+
+UP006 [*] Use `list` instead of `t.List` for type annotation
+    --> src/click/core.py:2391:64
+     |
+2390 |     def handle_parse_result(
+2391 |         self, ctx: Context, opts: t.Mapping[str, t.Any], args: t.List[str]
+     |                                                                ^^^^^^
+2392 |     ) -> t.Tuple[t.Any, t.List[str]]:
+2393 |         with augment_usage_errors(ctx, param=self):
+     |
+help: Replace with `list`
+     |
+2390 |     def handle_parse_result(
+     -         self, ctx: Context, opts: t.Mapping[str, t.Any], args: t.List[str]
+2391 +         self, ctx: Context, opts: t.Mapping[str, t.Any], args: list[str]
+2392 |     ) -> t.Tuple[t.Any, t.List[str]]:
+     |
+
+UP006 [*] Use `tuple` instead of `t.Tuple` for type annotation
+    --> src/click/core.py:2392:10
+     |
+2390 |     def handle_parse_result(
+2391 |         self, ctx: Context, opts: t.Mapping[str, t.Any], args: t.List[str]
+2392 |     ) -> t.Tuple[t.Any, t.List[str]]:
+     |          ^^^^^^^
+2393 |         with augment_usage_errors(ctx, param=self):
+2394 |             value, source = self.consume_value(ctx, opts)
+     |
+help: Replace with `tuple`
+     |
+2391 |         self, ctx: Context, opts: t.Mapping[str, t.Any], args: t.List[str]
+     -     ) -> t.Tuple[t.Any, t.List[str]]:
+2392 +     ) -> tuple[t.Any, t.List[str]]:
+2393 |         with augment_usage_errors(ctx, param=self):
+     |
+
+UP006 [*] Use `list` instead of `t.List` for type annotation
+    --> src/click/core.py:2392:25
+     |
+2390 |     def handle_parse_result(
+2391 |         self, ctx: Context, opts: t.Mapping[str, t.Any], args: t.List[str]
+2392 |     ) -> t.Tuple[t.Any, t.List[str]]:
+     |                         ^^^^^^
+2393 |         with augment_usage_errors(ctx, param=self):
+2394 |             value, source = self.consume_value(ctx, opts)
+     |
+help: Replace with `list`
+     |
+2391 |         self, ctx: Context, opts: t.Mapping[str, t.Any], args: t.List[str]
+     -     ) -> t.Tuple[t.Any, t.List[str]]:
+2392 +     ) -> t.Tuple[t.Any, list[str]]:
+2393 |         with augment_usage_errors(ctx, param=self):
+     |
+
+UP045 [*] Use `X | None` for type annotations
+    --> src/click/core.py:2410:48
+     |
+2408 |         return value, args
+2409 |
+2410 |     def get_help_record(self, ctx: Context) -> t.Optional[t.Tuple[str, str]]:
+     |                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2411 |         pass
+     |
+help: Convert to `X | None`
+     |
+2409 |
+     -     def get_help_record(self, ctx: Context) -> t.Optional[t.Tuple[str, str]]:
+2410 +     def get_help_record(self, ctx: Context) -> t.Tuple[str, str] | None:
+2411 |         pass
+     |
+
+UP006 [*] Use `tuple` instead of `t.Tuple` for type annotation
+    --> src/click/core.py:2410:59
+     |
+2408 |         return value, args
+2409 |
+2410 |     def get_help_record(self, ctx: Context) -> t.Optional[t.Tuple[str, str]]:
+     |                                                           ^^^^^^^
+2411 |         pass
+     |
+help: Replace with `tuple`
+     |
+2409 |
+     -     def get_help_record(self, ctx: Context) -> t.Optional[t.Tuple[str, str]]:
+2410 +     def get_help_record(self, ctx: Context) -> t.Optional[tuple[str, str]]:
+2411 |         pass
+     |
+
+UP006 [*] Use `list` instead of `t.List` for type annotation
+    --> src/click/core.py:2413:49
+     |
+2411 |         pass
+2412 |
+2413 |     def get_usage_pieces(self, ctx: Context) -> t.List[str]:
+     |                                                 ^^^^^^
+2414 |         return []
+     |
+help: Replace with `list`
+     |
+2412 |
+     -     def get_usage_pieces(self, ctx: Context) -> t.List[str]:
+2413 +     def get_usage_pieces(self, ctx: Context) -> list[str]:
+2414 |         return []
+     |
+
+UP006 [*] Use `list` instead of `t.List` for type annotation
+    --> src/click/core.py:2423:64
+     |
+2421 |         return " / ".join(f"'{x}'" for x in hint_list)
+2422 |
+2423 |     def shell_complete(self, ctx: Context, incomplete: str) -> t.List["CompletionItem"]:
+     |                                                                ^^^^^^
+2424 |         """Return a list of completions for the incomplete value. If a
+2425 |         ``shell_complete`` function was given during init, it is used.
+     |
+help: Replace with `list`
+     |
+2422 |
+     -     def shell_complete(self, ctx: Context, incomplete: str) -> t.List["CompletionItem"]:
+2423 +     def shell_complete(self, ctx: Context, incomplete: str) -> list["CompletionItem"]:
+2424 |         """Return a list of completions for the incomplete value. If a
+     |
+
+UP006 [*] Use `list` instead of `t.List` for type annotation
+    --> src/click/core.py:2442:27
+     |
+2440 |                 results = [CompletionItem(c) for c in results]
+2441 |
+2442 |             return t.cast(t.List["CompletionItem"], results)
+     |                           ^^^^^^
+2443 |
+2444 |         return self.type.shell_complete(ctx, self, incomplete)
+     |
+help: Replace with `list`
+     |
+2441 |
+     -             return t.cast(t.List["CompletionItem"], results)
+2442 +             return t.cast(list["CompletionItem"], results)
+2443 |
+     |
+
+UP045 [*] Use `X | None` for type annotations
+    --> src/click/core.py:2512:22
+     |
+2510 |     def __init__(
+2511 |         self,
+2512 |         param_decls: t.Optional[t.Sequence[str]] = None,
+     |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2513 |         show_default: t.Union[bool, str, None] = None,
+2514 |         prompt: t.Union[bool, str] = False,
+     |
+help: Convert to `X | None`
+     |
+2511 |         self,
+     -         param_decls: t.Optional[t.Sequence[str]] = None,
+2512 +         param_decls: t.Sequence[str] | None = None,
+2513 |         show_default: t.Union[bool, str, None] = None,
+     |
+
+UP007 [*] Use `X | Y` for type annotations
+    --> src/click/core.py:2513:23
+     |
+2511 |         self,
+2512 |         param_decls: t.Optional[t.Sequence[str]] = None,
+2513 |         show_default: t.Union[bool, str, None] = None,
+     |                       ^^^^^^^^^^^^^^^^^^^^^^^^
+2514 |         prompt: t.Union[bool, str] = False,
+2515 |         confirmation_prompt: t.Union[bool, str] = False,
+     |
+help: Convert to `X | Y`
+     |
+2512 |         param_decls: t.Optional[t.Sequence[str]] = None,
+     -         show_default: t.Union[bool, str, None] = None,
+2513 +         show_default: bool | str | None = None,
+2514 |         prompt: t.Union[bool, str] = False,
+     |
+
+UP007 [*] Use `X | Y` for type annotations
+    --> src/click/core.py:2514:17
+     |
+2512 |         param_decls: t.Optional[t.Sequence[str]] = None,
+2513 |         show_default: t.Union[bool, str, None] = None,
+2514 |         prompt: t.Union[bool, str] = False,
+     |                 ^^^^^^^^^^^^^^^^^^
+2515 |         confirmation_prompt: t.Union[bool, str] = False,
+2516 |         prompt_required: bool = True,
+     |
+help: Convert to `X | Y`
+     |
+2513 |         show_default: t.Union[bool, str, None] = None,
+     -         prompt: t.Union[bool, str] = False,
+2514 +         prompt: bool | str = False,
+2515 |         confirmation_prompt: t.Union[bool, str] = False,
+     |
+
+UP007 [*] Use `X | Y` for type annotations
+    --> src/click/core.py:2515:30
+     |
+2513 |         show_default: t.Union[bool, str, None] = None,
+2514 |         prompt: t.Union[bool, str] = False,
+2515 |         confirmation_prompt: t.Union[bool, str] = False,
+     |                              ^^^^^^^^^^^^^^^^^^
+2516 |         prompt_required: bool = True,
+2517 |         hide_input: bool = False,
+     |
+help: Convert to `X | Y`
+     |
+2514 |         prompt: t.Union[bool, str] = False,
+     -         confirmation_prompt: t.Union[bool, str] = False,
+2515 +         confirmation_prompt: bool | str = False,
+2516 |         prompt_required: bool = True,
+     |
+
+UP045 [*] Use `X | None` for type annotations
+    --> src/click/core.py:2518:18
+     |
+2516 |         prompt_required: bool = True,
+2517 |         hide_input: bool = False,
+2518 |         is_flag: t.Optional[bool] = None,
+     |                  ^^^^^^^^^^^^^^^^
+2519 |         flag_value: t.Optional[t.Any] = None,
+2520 |         multiple: bool = False,
+     |
+help: Convert to `X | None`
+     |
+2517 |         hide_input: bool = False,
+     -         is_flag: t.Optional[bool] = None,
+2518 +         is_flag: bool | None = None,
+2519 |         flag_value: t.Optional[t.Any] = None,
+     |
+
+UP045 [*] Use `X | None` for type annotations
+    --> src/click/core.py:2519:21
+     |
+2517 |         hide_input: bool = False,
+2518 |         is_flag: t.Optional[bool] = None,
+2519 |         flag_value: t.Optional[t.Any] = None,
+     |                     ^^^^^^^^^^^^^^^^^
+2520 |         multiple: bool = False,
+2521 |         count: bool = False,
+     |
+help: Convert to `X | None`
+     |
+2518 |         is_flag: t.Optional[bool] = None,
+     -         flag_value: t.Optional[t.Any] = None,
+2519 +         flag_value: t.Any | None = None,
+2520 |         multiple: bool = False,
+     |
+
+UP045 [*] Use `X | None` for type annotations
+    --> src/click/core.py:2523:15
+     |
+2521 |         count: bool = False,
+2522 |         allow_from_autoenv: bool = True,
+2523 |         type: t.Optional[t.Union[types.ParamType, t.Any]] = None,
+     |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2524 |         help: t.Optional[str] = None,
+2525 |         hidden: bool = False,
+     |
+help: Convert to `X | None`
+     |
+2522 |         allow_from_autoenv: bool = True,
+     -         type: t.Optional[t.Union[types.ParamType, t.Any]] = None,
+2523 +         type: t.Union[types.ParamType, t.Any] | None = None,
+2524 |         help: t.Optional[str] = None,
+     |
+
+UP007 [*] Use `X | Y` for type annotations
+    --> src/click/core.py:2523:26
+     |
+2521 |         count: bool = False,
+2522 |         allow_from_autoenv: bool = True,
+2523 |         type: t.Optional[t.Union[types.ParamType, t.Any]] = None,
+     |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2524 |         help: t.Optional[str] = None,
+2525 |         hidden: bool = False,
+     |
+help: Convert to `X | Y`
+     |
+2522 |         allow_from_autoenv: bool = True,
+     -         type: t.Optional[t.Union[types.ParamType, t.Any]] = None,
+2523 +         type: t.Optional[types.ParamType | t.Any] = None,
+2524 |         help: t.Optional[str] = None,
+     |
+
+UP045 [*] Use `X | None` for type annotations
+    --> src/click/core.py:2524:15
+     |
+2522 |         allow_from_autoenv: bool = True,
+2523 |         type: t.Optional[t.Union[types.ParamType, t.Any]] = None,
+2524 |         help: t.Optional[str] = None,
+     |               ^^^^^^^^^^^^^^^
+2525 |         hidden: bool = False,
+2526 |         show_choices: bool = True,
+     |
+help: Convert to `X | None`
+     |
+2523 |         type: t.Optional[t.Union[types.ParamType, t.Any]] = None,
+     -         help: t.Optional[str] = None,
+2524 +         help: str | None = None,
+2525 |         hidden: bool = False,
+     |
+
+UP045 [*] Use `X | None` for type annotations
+    --> src/click/core.py:2540:26
+     |
+2538 |                 raise TypeError("'name' is required with 'prompt=True'.")
+2539 |
+2540 |             prompt_text: t.Optional[str] = self.name.replace("_", " ").capitalize()
+     |                          ^^^^^^^^^^^^^^^
+2541 |         elif prompt is False:
+2542 |             prompt_text = None
+     |
+help: Convert to `X | None`
+     |
+2539 |
+     -             prompt_text: t.Optional[str] = self.name.replace("_", " ").capitalize()
+2540 +             prompt_text: str | None = self.name.replace("_", " ").capitalize()
+2541 |         elif prompt is False:
+     |
+
+UP007 [*] Use `X | Y` for type annotations
+    --> src/click/core.py:2572:27
+     |
+2571 |         if is_flag and default_is_missing and not self.required:
+2572 |             self.default: t.Union[t.Any, t.Callable[[], t.Any]] = False
+     |                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2573 |
+2574 |         if flag_value is None:
+     |
+help: Convert to `X | Y`
+     |
+2571 |         if is_flag and default_is_missing and not self.required:
+     -             self.default: t.Union[t.Any, t.Callable[[], t.Any]] = False
+2572 +             self.default: t.Any | t.Callable[[], t.Any] = False
+2573 |
+     |
+
+UP006 [*] Use `dict` instead of `t.Dict` for type annotation
+    --> src/click/core.py:2626:31
+     |
+2624 |                 raise TypeError("'multiple' is not valid with 'is_flag', use 'count'.")
+2625 |
+2626 |     def to_info_dict(self) -> t.Dict[str, t.Any]:
+     |                               ^^^^^^
+2627 |         info_dict = super().to_info_dict()
+2628 |         info_dict.update(
+     |
+help: Replace with `dict`
+     |
+2625 |
+     -     def to_info_dict(self) -> t.Dict[str, t.Any]:
+2626 +     def to_info_dict(self) -> dict[str, t.Any]:
+2627 |         info_dict = super().to_info_dict()
+     |
+
+UP006 [*] Use `tuple` instead of `t.Tuple` for type annotation
+    --> src/click/core.py:2640:10
+     |
+2638 |     def _parse_decls(
+2639 |         self, decls: t.Sequence[str], expose_value: bool
+2640 |     ) -> t.Tuple[t.Optional[str], t.List[str], t.List[str]]:
+     |          ^^^^^^^
+2641 |         opts = []
+2642 |         secondary_opts = []
+     |
+help: Replace with `tuple`
+     |
+2639 |         self, decls: t.Sequence[str], expose_value: bool
+     -     ) -> t.Tuple[t.Optional[str], t.List[str], t.List[str]]:
+2640 +     ) -> tuple[t.Optional[str], t.List[str], t.List[str]]:
+2641 |         opts = []
+     |
+
+UP045 [*] Use `X | None` for type annotations
+    --> src/click/core.py:2640:18
+     |
+2638 |     def _parse_decls(
+2639 |         self, decls: t.Sequence[str], expose_value: bool
+2640 |     ) -> t.Tuple[t.Optional[str], t.List[str], t.List[str]]:
+     |                  ^^^^^^^^^^^^^^^
+2641 |         opts = []
+2642 |         secondary_opts = []
+     |
+help: Convert to `X | None`
+     |
+2639 |         self, decls: t.Sequence[str], expose_value: bool
+     -     ) -> t.Tuple[t.Optional[str], t.List[str], t.List[str]]:
+2640 +     ) -> t.Tuple[str | None, t.List[str], t.List[str]]:
+2641 |         opts = []
+     |
+
+UP006 [*] Use `list` instead of `t.List` for type annotation
+    --> src/click/core.py:2640:35
+     |
+2638 |     def _parse_decls(
+2639 |         self, decls: t.Sequence[str], expose_value: bool
+2640 |     ) -> t.Tuple[t.Optional[str], t.List[str], t.List[str]]:
+     |                                   ^^^^^^
+2641 |         opts = []
+2642 |         secondary_opts = []
+     |
+help: Replace with `list`
+     |
+2639 |         self, decls: t.Sequence[str], expose_value: bool
+     -     ) -> t.Tuple[t.Optional[str], t.List[str], t.List[str]]:
+2640 +     ) -> t.Tuple[t.Optional[str], list[str], t.List[str]]:
+2641 |         opts = []
+     |
+
+UP006 [*] Use `list` instead of `t.List` for type annotation
+    --> src/click/core.py:2640:48
+     |
+2638 |     def _parse_decls(
+2639 |         self, decls: t.Sequence[str], expose_value: bool
+2640 |     ) -> t.Tuple[t.Optional[str], t.List[str], t.List[str]]:
+     |                                                ^^^^^^
+2641 |         opts = []
+2642 |         secondary_opts = []
+     |
+help: Replace with `list`
+     |
+2639 |         self, decls: t.Sequence[str], expose_value: bool
+     -     ) -> t.Tuple[t.Optional[str], t.List[str], t.List[str]]:
+2640 +     ) -> t.Tuple[t.Optional[str], t.List[str], list[str]]:
+2641 |         opts = []
+     |
+
+UP045 [*] Use `X | None` for type annotations
+    --> src/click/core.py:2730:48
+     |
+2728 |             )
+2729 |
+2730 |     def get_help_record(self, ctx: Context) -> t.Optional[t.Tuple[str, str]]:
+     |                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2731 |         if self.hidden:
+2732 |             return None
+     |
+help: Convert to `X | None`
+     |
+2729 |
+     -     def get_help_record(self, ctx: Context) -> t.Optional[t.Tuple[str, str]]:
+2730 +     def get_help_record(self, ctx: Context) -> t.Tuple[str, str] | None:
+2731 |         if self.hidden:
+     |
+
+UP006 [*] Use `tuple` instead of `t.Tuple` for type annotation
+    --> src/click/core.py:2730:59
+     |
+2728 |             )
+2729 |
+2730 |     def get_help_record(self, ctx: Context) -> t.Optional[t.Tuple[str, str]]:
+     |                                                           ^^^^^^^
+2731 |         if self.hidden:
+2732 |             return None
+     |
+help: Replace with `tuple`
+     |
+2729 |
+     -     def get_help_record(self, ctx: Context) -> t.Optional[t.Tuple[str, str]]:
+2730 +     def get_help_record(self, ctx: Context) -> t.Optional[tuple[str, str]]:
+2731 |         if self.hidden:
+     |
+
+SIM102 Use a single `if` statement instead of nested `if` statements
+    --> src/click/core.py:2760:13
+     |
+2758 |               envvar = self.envvar
+2759 |
+2760 | /             if envvar is None:
+2761 | |                 if (
+2762 | |                     self.allow_from_autoenv
+2763 | |                     and ctx.auto_envvar_prefix is not None
+2764 | |                     and self.name is not None
+2765 | |                 ):
+     | |__________________^
+2766 |                       envvar = f"{ctx.auto_envvar_prefix}_{self.name.upper()}"
+     |
+help: Combine `if` statements using `and`
+
+UP045 [*] Use `X | None` for type annotations
+    --> src/click/core.py:2841:10
+     |
+2839 |     def get_default(
+2840 |         self, ctx: Context, call: "te.Literal[True]" = True
+2841 |     ) -> t.Optional[t.Any]:
+     |          ^^^^^^^^^^^^^^^^^
+2842 |         ...
+     |
+help: Convert to `X | None`
+     |
+2840 |         self, ctx: Context, call: "te.Literal[True]" = True
+     -     ) -> t.Optional[t.Any]:
+2841 +     ) -> t.Any | None:
+2842 |         ...
+     |
+
+UP045 [*] Use `X | None` for type annotations
+    --> src/click/core.py:2847:10
+     |
+2845 |     def get_default(
+2846 |         self, ctx: Context, call: bool = ...
+2847 |     ) -> t.Optional[t.Union[t.Any, t.Callable[[], t.Any]]]:
+     |          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2848 |         ...
+     |
+help: Convert to `X | None`
+     |
+2846 |         self, ctx: Context, call: bool = ...
+     -     ) -> t.Optional[t.Union[t.Any, t.Callable[[], t.Any]]]:
+2847 +     ) -> t.Union[t.Any, t.Callable[[], t.Any]] | None:
+2848 |         ...
+     |
+
+UP007 [*] Use `X | Y` for type annotations
+    --> src/click/core.py:2847:21
+     |
+2845 |     def get_default(
+2846 |         self, ctx: Context, call: bool = ...
+2847 |     ) -> t.Optional[t.Union[t.Any, t.Callable[[], t.Any]]]:
+     |                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2848 |         ...
+     |
+help: Convert to `X | Y`
+     |
+2846 |         self, ctx: Context, call: bool = ...
+     -     ) -> t.Optional[t.Union[t.Any, t.Callable[[], t.Any]]]:
+2847 +     ) -> t.Optional[t.Any | t.Callable[[], t.Any]]:
+2848 |         ...
+     |
+
+UP045 [*] Use `X | None` for type annotations
+    --> src/click/core.py:2852:10
+     |
+2850 |     def get_default(
+2851 |         self, ctx: Context, call: bool = True
+2852 |     ) -> t.Optional[t.Union[t.Any, t.Callable[[], t.Any]]]:
+     |          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2853 |         # If we're a non boolean flag our default is more complex because
+2854 |         # we need to look at all flags in the same group to figure out
+     |
+help: Convert to `X | None`
+     |
+2851 |         self, ctx: Context, call: bool = True
+     -     ) -> t.Optional[t.Union[t.Any, t.Callable[[], t.Any]]]:
+2852 +     ) -> t.Union[t.Any, t.Callable[[], t.Any]] | None:
+2853 |         # If we're a non boolean flag our default is more complex because
+     |
+
+UP007 [*] Use `X | Y` for type annotations
+    --> src/click/core.py:2852:21
+     |
+2850 |     def get_default(
+2851 |         self, ctx: Context, call: bool = True
+2852 |     ) -> t.Optional[t.Union[t.Any, t.Callable[[], t.Any]]]:
+     |                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2853 |         # If we're a non boolean flag our default is more complex because
+2854 |         # we need to look at all flags in the same group to figure out
+     |
+help: Convert to `X | Y`
+     |
+2851 |         self, ctx: Context, call: bool = True
+     -     ) -> t.Optional[t.Union[t.Any, t.Callable[[], t.Any]]]:
+2852 +     ) -> t.Optional[t.Any | t.Callable[[], t.Any]]:
+2853 |         # If we're a non boolean flag our default is more complex because
+     |
+
+UP045 [*] Use `X | None` for type annotations
+    --> src/click/core.py:2892:53
+     |
+2890 |         )
+2891 |
+2892 |     def resolve_envvar_value(self, ctx: Context) -> t.Optional[str]:
+     |                                                     ^^^^^^^^^^^^^^^
+2893 |         rv = super().resolve_envvar_value(ctx)
+     |
+help: Convert to `X | None`
+     |
+2891 |
+     -     def resolve_envvar_value(self, ctx: Context) -> t.Optional[str]:
+2892 +     def resolve_envvar_value(self, ctx: Context) -> str | None:
+2893 |         rv = super().resolve_envvar_value(ctx)
+     |
+
+UP045 [*] Use `X | None` for type annotations
+    --> src/click/core.py:2911:50
+     |
+2909 |         return None
+2910 |
+2911 |     def value_from_envvar(self, ctx: Context) -> t.Optional[t.Any]:
+     |                                                  ^^^^^^^^^^^^^^^^^
+2912 |         rv: t.Optional[t.Any] = self.resolve_envvar_value(ctx)
+     |
+help: Convert to `X | None`
+     |
+2910 |
+     -     def value_from_envvar(self, ctx: Context) -> t.Optional[t.Any]:
+2911 +     def value_from_envvar(self, ctx: Context) -> t.Any | None:
+2912 |         rv: t.Optional[t.Any] = self.resolve_envvar_value(ctx)
+     |
+
+UP045 [*] Use `X | None` for type annotations
+    --> src/click/core.py:2912:13
+     |
+2911 |     def value_from_envvar(self, ctx: Context) -> t.Optional[t.Any]:
+2912 |         rv: t.Optional[t.Any] = self.resolve_envvar_value(ctx)
+     |             ^^^^^^^^^^^^^^^^^
+2913 |
+2914 |         if rv is None:
+     |
+help: Convert to `X | None`
+     |
+2911 |     def value_from_envvar(self, ctx: Context) -> t.Optional[t.Any]:
+     -         rv: t.Optional[t.Any] = self.resolve_envvar_value(ctx)
+2912 +         rv: t.Any | None = self.resolve_envvar_value(ctx)
+2913 |
+     |
+
+UP006 [*] Use `tuple` instead of `t.Tuple` for type annotation
+    --> src/click/core.py:2929:10
+     |
+2927 |     def consume_value(
+2928 |         self, ctx: Context, opts: t.Mapping[str, "Parameter"]
+2929 |     ) -> t.Tuple[t.Any, ParameterSource]:
+     |          ^^^^^^^
+2930 |         value, source = super().consume_value(ctx, opts)
+     |
+help: Replace with `tuple`
+     |
+2928 |         self, ctx: Context, opts: t.Mapping[str, "Parameter"]
+     -     ) -> t.Tuple[t.Any, ParameterSource]:
+2929 +     ) -> tuple[t.Any, ParameterSource]:
+2930 |         value, source = super().consume_value(ctx, opts)
+     |
+
+UP045 [*] Use `X | None` for type annotations
+    --> src/click/core.py:2978:19
+     |
+2976 |         self,
+2977 |         param_decls: t.Sequence[str],
+2978 |         required: t.Optional[bool] = None,
+     |                   ^^^^^^^^^^^^^^^^
+2979 |         **attrs: t.Any,
+2980 |     ) -> None:
+     |
+help: Convert to `X | None`
+     |
+2977 |         param_decls: t.Sequence[str],
+     -         required: t.Optional[bool] = None,
+2978 +         required: bool | None = None,
+2979 |         **attrs: t.Any,
+     |
+
+SIM102 Use a single `if` statement instead of nested `if` statements
+    --> src/click/core.py:2992:9
+     |
+2990 |           super().__init__(param_decls, required=required, **attrs)
+2991 |
+2992 | /         if __debug__:
+2993 | |             if self.default is not None and self.nargs == -1:
+     | |_____________________________________________________________^
+2994 |                   raise TypeError("'default' is not supported for nargs=-1.")
+     |
+help: Combine `if` statements using `and`
+
+UP006 [*] Use `tuple` instead of `t.Tuple` for type annotation
+    --> src/click/core.py:3016:10
+     |
+3014 |     def _parse_decls(
+3015 |         self, decls: t.Sequence[str], expose_value: bool
+3016 |     ) -> t.Tuple[t.Optional[str], t.List[str], t.List[str]]:
+     |          ^^^^^^^
+3017 |         if not decls:
+3018 |             if not expose_value:
+     |
+help: Replace with `tuple`
+     |
+3015 |         self, decls: t.Sequence[str], expose_value: bool
+     -     ) -> t.Tuple[t.Optional[str], t.List[str], t.List[str]]:
+3016 +     ) -> tuple[t.Optional[str], t.List[str], t.List[str]]:
+3017 |         if not decls:
+     |
+
+UP045 [*] Use `X | None` for type annotations
+    --> src/click/core.py:3016:18
+     |
+3014 |     def _parse_decls(
+3015 |         self, decls: t.Sequence[str], expose_value: bool
+3016 |     ) -> t.Tuple[t.Optional[str], t.List[str], t.List[str]]:
+     |                  ^^^^^^^^^^^^^^^
+3017 |         if not decls:
+3018 |             if not expose_value:
+     |
+help: Convert to `X | None`
+     |
+3015 |         self, decls: t.Sequence[str], expose_value: bool
+     -     ) -> t.Tuple[t.Optional[str], t.List[str], t.List[str]]:
+3016 +     ) -> t.Tuple[str | None, t.List[str], t.List[str]]:
+3017 |         if not decls:
+     |
+
+UP006 [*] Use `list` instead of `t.List` for type annotation
+    --> src/click/core.py:3016:35
+     |
+3014 |     def _parse_decls(
+3015 |         self, decls: t.Sequence[str], expose_value: bool
+3016 |     ) -> t.Tuple[t.Optional[str], t.List[str], t.List[str]]:
+     |                                   ^^^^^^
+3017 |         if not decls:
+3018 |             if not expose_value:
+     |
+help: Replace with `list`
+     |
+3015 |         self, decls: t.Sequence[str], expose_value: bool
+     -     ) -> t.Tuple[t.Optional[str], t.List[str], t.List[str]]:
+3016 +     ) -> t.Tuple[t.Optional[str], list[str], t.List[str]]:
+3017 |         if not decls:
+     |
+
+UP006 [*] Use `list` instead of `t.List` for type annotation
+    --> src/click/core.py:3016:48
+     |
+3014 |     def _parse_decls(
+3015 |         self, decls: t.Sequence[str], expose_value: bool
+3016 |     ) -> t.Tuple[t.Optional[str], t.List[str], t.List[str]]:
+     |                                                ^^^^^^
+3017 |         if not decls:
+3018 |             if not expose_value:
+     |
+help: Replace with `list`
+     |
+3015 |         self, decls: t.Sequence[str], expose_value: bool
+     -     ) -> t.Tuple[t.Optional[str], t.List[str], t.List[str]]:
+3016 +     ) -> t.Tuple[t.Optional[str], t.List[str], list[str]]:
+3017 |         if not decls:
+     |
+
+UP006 [*] Use `list` instead of `t.List` for type annotation
+    --> src/click/core.py:3031:49
+     |
+3029 |         return name, [arg], []
+3030 |
+3031 |     def get_usage_pieces(self, ctx: Context) -> t.List[str]:
+     |                                                 ^^^^^^
+3032 |         return [self.make_metavar()]
+     |
+help: Replace with `list`
+     |
+3030 |
+     -     def get_usage_pieces(self, ctx: Context) -> t.List[str]:
+3031 +     def get_usage_pieces(self, ctx: Context) -> list[str]:
+3032 |         return [self.make_metavar()]
+     |
+
+Found 220 errors.
+[*] 208 fixable with the `--fix` option (4 hidden fixes can be enabled with the `--unsafe-fixes` option).

@@ -1,0 +1,2 @@
+All checks passed!
+warning: The `ignore-init-module-imports` option is deprecated and will be removed in a future release. Ruff's handling of imports in `__init__.py` files has been improved (in preview) and unused imports will always be flagged.

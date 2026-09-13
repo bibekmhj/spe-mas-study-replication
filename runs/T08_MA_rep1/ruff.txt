@@ -1,0 +1,16 @@
+UP009 [*] UTF-8 encoding declaration is unnecessary
+ --> tests/test_bashcomplete.py:1:1
+  |
+1 | # -*- coding: utf-8 -*-
+  | ^^^^^^^^^^^^^^^^^^^^^^^
+2 |
+3 | import click
+  |
+help: Remove unnecessary coding comment
+  |
+  - # -*- coding: utf-8 -*-
+1 |
+  |
+
+Found 1 error.
+[*] 1 fixable with the `--fix` option.

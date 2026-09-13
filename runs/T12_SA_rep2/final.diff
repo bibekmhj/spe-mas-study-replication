@@ -1,0 +1,84 @@
+diff --git a/click/formatting.py b/click/formatting.py
+index a6f8f41..fbcc3b1 100644
+--- a/click/formatting.py
++++ b/click/formatting.py
+@@ -123,14 +123,24 @@ class HelpFormatter(object):
+         :param args: whitespace separated list of arguments.
+         :param prefix: the prefix for the first line.
+         """
+-        prefix = '%*s%s' % (self.current_indent, prefix, prog)
+-        self.write(prefix)
+-
+-        text_width = max(self.width - self.current_indent - term_len(prefix), 10)
+-        indent = ' ' * (term_len(prefix) + 1)
+-        self.write(wrap_text(args, text_width,
+-                             initial_indent=' ',
+-                             subsequent_indent=indent))
++        usage_prefix = '%*s%s ' % (self.current_indent, prefix, prog)
++        text_width = self.width - self.current_indent
++
++        if text_width >= (term_len(usage_prefix) + 20):
++            # The arguments will fit to the right of the prefix.
++            indent = ' ' * term_len(usage_prefix)
++            self.write(wrap_text(args, text_width,
++                                 initial_indent=usage_prefix,
++                                 subsequent_indent=indent))
++        else:
++            # The prefix is too long, put the arguments on the next
++            # line.
++            self.write(usage_prefix)
++            self.write('\n')
++            indent = ' ' * (max(self.current_indent, term_len(prefix)) + 4)
++            self.write(wrap_text(args, text_width,
++                                 initial_indent=indent,
++                                 subsequent_indent=indent))
+ 
+         self.write('\n')
+ 
+diff --git a/tests/test_formatting.py b/tests/test_formatting.py
+index 30059aa..142db95 100644
+--- a/tests/test_formatting.py
++++ b/tests/test_formatting.py
+@@ -48,3 +48,42 @@ def test_basic_functionality(runner):
+         'Options:',
+         '  --help  Show this message and exit.',
+     ]
++
++
++def test_wrapping_long_options_strings(runner):
++    @click.group()
++    def cli():
++        """Top level command
++        """
++
++    @cli.group()
++    def a_very_long():
++        """Second level
++        """
++
++    @a_very_long.command()
++    @click.argument('first')
++    @click.argument('second')
++    @click.argument('third')
++    @click.argument('fourth')
++    @click.argument('fifth')
++    @click.argument('sixth')
++    def command():
++        """A command.
++        """
++
++    # 54 is chosen as a lenthg where the second line is one character
++    # longer than the maximum length.
++    result = runner.invoke(cli, ['a_very_long', 'command', '--help'],
++                           terminal_width=54)
++    assert not result.exception
++    assert result.output.splitlines() == [
++        'Usage: cli a_very_long command [OPTIONS] FIRST SECOND',
++        '                               THIRD FOURTH FIFTH',
++        '                               SIXTH',
++        '',
++        '  A command.',
++        '',
++        'Options:',
++        '  --help  Show this message and exit.',
++    ]

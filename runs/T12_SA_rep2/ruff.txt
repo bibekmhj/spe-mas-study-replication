@@ -1,0 +1,97 @@
+I001 [*] Import block is un-sorted or un-formatted
+ --> click/formatting.py:1:1
+  |
+1 | / from contextlib import contextmanager
+2 | | from .termui import get_terminal_size
+3 | | from .parser import split_opt
+4 | | from ._compat import term_len
+  | |_____________________________^
+help: Organize imports
+  |
+1 | from contextlib import contextmanager
+  - from .termui import get_terminal_size
+  - from .parser import split_opt
+2 +
+3 | from ._compat import term_len
+4 + from .parser import split_opt
+5 + from .termui import get_terminal_size
+6 |
+  |
+
+UP004 [*] Class `HelpFormatter` inherits from `object`
+  --> click/formatting.py:85:21
+   |
+85 | class HelpFormatter(object):
+   |                     ^^^^^^
+86 |     """This class helps with formatting text-based help pages.  It's
+87 |     usually just needed for very special internal cases, but it's also
+   |
+help: Remove `object` inheritance
+   |
+84 |
+   - class HelpFormatter(object):
+85 + class HelpFormatter:
+86 |     """This class helps with formatting text-based help pages.  It's
+   |
+
+UP031 Use format specifiers instead of percent format
+   --> click/formatting.py:126:24
+    |
+124 |         :param prefix: the prefix for the first line.
+125 |         """
+126 |         usage_prefix = '%*s%s ' % (self.current_indent, prefix, prog)
+    |                        ^^^^^^^^
+127 |         text_width = self.width - self.current_indent
+    |
+help: Replace with format specifiers
+
+UP031 Use format specifiers instead of percent format
+   --> click/formatting.py:149:20
+    |
+147 |     def write_heading(self, heading):
+148 |         """Writes a heading into the buffer."""
+149 |         self.write('%*s%s:\n' % (self.current_indent, '', heading))
+    |                    ^^^^^^^^^^
+150 |
+151 |     def write_paragraph(self):
+    |
+help: Replace with format specifiers
+
+UP031 Use format specifiers instead of percent format
+   --> click/formatting.py:185:24
+    |
+184 |         for first, second in iter_rows(rows, len(widths)):
+185 |             self.write('%*s%s' % (self.current_indent, '', first))
+    |                        ^^^^^^^
+186 |             if not second:
+187 |                 self.write('\n')
+    |
+help: Replace with format specifiers
+
+UP031 Use format specifiers instead of percent format
+   --> click/formatting.py:200:32
+    |
+198 |                 self.write(next(lines) + '\n')
+199 |                 for line in lines:
+200 |                     self.write('%*s%s\n' % (
+    |                                ^^^^^^^^^
+201 |                         first_col + self.current_indent, '', line))
+202 |             else:
+    |
+help: Replace with format specifiers
+
+UP009 [*] UTF-8 encoding declaration is unnecessary
+ --> tests/test_formatting.py:1:1
+  |
+1 | # -*- coding: utf-8 -*-
+  | ^^^^^^^^^^^^^^^^^^^^^^^
+2 | import click
+  |
+help: Remove unnecessary coding comment
+  |
+  - # -*- coding: utf-8 -*-
+1 | import click
+  |
+
+Found 7 errors.
+[*] 3 fixable with the `--fix` option.

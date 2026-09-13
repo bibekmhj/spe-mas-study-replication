@@ -1,0 +1,106 @@
+diff --git a/click/_bashcomplete.py b/click/_bashcomplete.py
+index d9d26d2..b83bf33 100644
+--- a/click/_bashcomplete.py
++++ b/click/_bashcomplete.py
+@@ -30,15 +30,51 @@ def get_completion_script(prog_name, complete_var):
+ 
+ def resolve_ctx(cli, prog_name, args):
+     ctx = cli.make_context(prog_name, args, resilient_parsing=True)
+-    while ctx.protected_args + ctx.args and isinstance(ctx.command, MultiCommand):
+-        a = ctx.protected_args + ctx.args
+-        cmd = ctx.command.get_command(ctx, a[0])
+-        if cmd is None:
+-            return None
+-        ctx = cmd.make_context(a[0], a[1:], parent=ctx, resilient_parsing=True)
++    args = ctx.protected_args + ctx.args
++    while args:
++        if isinstance(ctx.command, MultiCommand):
++            if not ctx.command.chain:
++                cmd_name, cmd, args = ctx.command.resolve_command(ctx, args)
++                if cmd is None:
++                    return ctx
++                ctx = cmd.make_context(cmd_name, args, parent=ctx,
++                                        resilient_parsing=True)
++                args = ctx.protected_args + ctx.args
++            else:
++                # Walk chained subcommands, invoking resolve_command for
++                # each one and passing the remaining args to the next.
++                while args:
++                    cmd_name, cmd, args = ctx.command.resolve_command(ctx, args)
++                    if cmd is None:
++                        return ctx
++                    sub_ctx = cmd.make_context(cmd_name, args, parent=ctx,
++                                                allow_extra_args=True,
++                                                allow_interspersed_args=False,
++                                                resilient_parsing=True)
++                    args = sub_ctx.args
++                ctx = sub_ctx
++                args = ctx.protected_args + ctx.args
++        else:
++            break
+     return ctx
+ 
+ 
++def add_subcommand_completions(ctx, incomplete, completions_out):
++    # Add subcommand completions.
++    if isinstance(ctx.command, MultiCommand):
++        completions_out.extend(
++            [c for c in ctx.command.list_commands(ctx) if c.startswith(incomplete)])
++
++    # Walk up the context list and add any other completion possibilities
++    # from chained commands.
++    while ctx.parent is not None:
++        ctx = ctx.parent
++        if isinstance(ctx.command, MultiCommand) and ctx.command.chain:
++            remaining_commands = [c for c in ctx.command.list_commands(ctx)
++                                  if c.startswith(incomplete) and c not in ctx.protected_args]
++            completions_out.extend(remaining_commands)
++
++
+ def get_choices(cli, prog_name, args, incomplete):
+     ctx = resolve_ctx(cli, prog_name, args)
+     if ctx is None:
+@@ -51,8 +87,8 @@ def get_choices(cli, prog_name, args, incomplete):
+                 continue
+             choices.extend(param.opts)
+             choices.extend(param.secondary_opts)
+-    elif isinstance(ctx.command, MultiCommand):
+-        choices.extend(ctx.command.list_commands(ctx))
++    else:
++        add_subcommand_completions(ctx, incomplete, choices)
+ 
+     for item in choices:
+         if item.startswith(incomplete):
+diff --git a/tests/test_bashcomplete.py b/tests/test_bashcomplete.py
+index fea096c..5b247bf 100644
+--- a/tests/test_bashcomplete.py
++++ b/tests/test_bashcomplete.py
+@@ -60,3 +60,28 @@ def test_long_chain():
+     assert list(get_choices(cli, 'lol', ['asub', 'bsub'], '')) == ['csub']
+     assert list(get_choices(cli, 'lol', ['asub', 'bsub', 'csub'], '-')) == ['--csub-opt']
+     assert list(get_choices(cli, 'lol', ['asub', 'bsub', 'csub'], '')) == []
++
++
++def test_chaining():
++    @click.group('cli', chain=True)
++    @click.option('--cli-opt')
++    def cli(cli_opt):
++        pass
++
++    @cli.command('asub')
++    @click.option('--asub-opt')
++    def asub(asub_opt):
++        pass
++
++    @cli.command('bsub')
++    @click.option('--bsub-opt')
++    def bsub(bsub_opt, arg):
++        pass
++
++    assert list(get_choices(cli, 'lol', [], '-')) == ['--cli-opt']
++    assert list(get_choices(cli, 'lol', [], '')) == ['asub', 'bsub']
++    assert list(get_choices(cli, 'lol', ['asub'], '-')) == ['--asub-opt']
++    assert list(get_choices(cli, 'lol', ['asub'], '')) == ['bsub']
++    assert list(get_choices(cli, 'lol', ['bsub'], '')) == ['asub']
++    assert list(get_choices(cli, 'lol', ['asub', '--asub-opt', '5', 'bsub'], '-')) == ['--bsub-opt']
++    assert list(get_choices(cli, 'lol', ['asub', 'bsub'], '-')) == ['--bsub-opt']

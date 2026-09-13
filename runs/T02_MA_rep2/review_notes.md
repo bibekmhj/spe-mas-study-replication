@@ -1,0 +1,12 @@
+## Review Notes
+
+**Overall verdict:** The diff implements the *core* fix and the added tests demonstrate it works, but it takes a narrower/simpler approach than what the plan sketched out, and it leaves a few plan items unaddressed.
+
+### Does it follow the plan?
+
+- ✅ **Root cause correctly identified**: `Argument.make_metavar()` in `core.py` unconditionally wraps the metavar in `[...]` when `required=False`, even when the type (e.g. `Choice`, multi-format `DateTime`) has *already* produced a bracketed/braced representation (`[a|b|c]` or `{a|b|c}`). That matches the plan's hypothesis about double-bracketing.
+- ✅ Fix is localized to `Argument.make_metavar` as anticipated (step 1).
+- ⚠️ **`types.py` was not touched at all**, even to double check `Choice.get_metavar()`'s bracket/brace behavior. The plan flagged this as a "possibly" location to inspect — the Coder apparently inspected it (since the fix correctly anticipates both `[...]` and `{...}` forms) but did not leave any comment/trace of that investigation. Worth confirming in follow-up that `Choice`/`DateTime`/any future type won't introduce a third bracket style (e.g. `<...>`) that would reintroduce the bug.
+- ⚠️ **No comparison with PR #3507** is evident from the diff (no comment, no shared helper). The plan suggested reusing/mirroring that fix's mechanism; instead a simple ad hoc `startswith/endswith` check was used. Functionally fine, but if #3507's approach used a shared "already-bracketed" concept, there's a missed opportunity for consistency/de-duplication between the command-usage fix and this argument-metavar fix.
+- ❌ **Option parameters not addressed.** The plan explicitly listed the possibility that the same double-bracket bug applies to `Option.make_metavar()` (or equivalent). The diff only patches `Argument.make_metavar`. No test confirms `Option` w/ `Choice` and `required=False`/`multiple=True` is unaffected or already fine. This should be verified — if `Option`'s metavar logic shares the same wrap-when-not-required pattern, the bug may still be reproducible there.
+- ❌ **No changelog entry.** Plan step 7 explicitly says to check whether the repo convention requires an entry in `CHANGES.rst` (mirroring PR #3507). No such entry was added. This is very

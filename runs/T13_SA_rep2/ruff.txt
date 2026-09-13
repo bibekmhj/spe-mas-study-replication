@@ -1,0 +1,50 @@
+I001 [*] Import block is un-sorted or un-formatted
+ --> click/_bashcomplete.py:1:1
+  |
+1 | / import os
+2 | | import re
+3 | | from .utils import echo
+4 | | from .parser import split_arg_string
+5 | | from .core import MultiCommand, Option
+  | |______________________________________^
+help: Organize imports
+  |
+2 | import re
+3 +
+4 + from .core import MultiCommand, Option
+5 + from .parser import split_arg_string
+6 | from .utils import echo
+  - from .parser import split_arg_string
+  - from .core import MultiCommand, Option
+  -
+7 |
+  |
+
+UP031 Use format specifiers instead of percent format
+  --> click/_bashcomplete.py:25:26
+   |
+23 |     cf_name = _invalid_ident_char_re.sub('', prog_name.replace('-', '_'))
+24 |     return (COMPLETION_SCRIPT % {
+25 |         'complete_func': '_%s_completion' % cf_name,
+   |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+26 |         'script_names': prog_name,
+27 |         'autocomplete_var': complete_var,
+   |
+help: Replace with format specifiers
+
+UP009 [*] UTF-8 encoding declaration is unnecessary
+ --> tests/test_bashcomplete.py:1:1
+  |
+1 | # -*- coding: utf-8 -*-
+  | ^^^^^^^^^^^^^^^^^^^^^^^
+2 |
+3 | import click
+  |
+help: Remove unnecessary coding comment
+  |
+  - # -*- coding: utf-8 -*-
+1 |
+  |
+
+Found 3 errors.
+[*] 2 fixable with the `--fix` option (1 hidden fix can be enabled with the `--unsafe-fixes` option).

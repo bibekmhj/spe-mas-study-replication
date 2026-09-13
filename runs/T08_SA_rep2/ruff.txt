@@ -1,0 +1,125 @@
+I001 [*] Import block is un-sorted or un-formatted
+ --> click/_bashcomplete.py:1:1
+  |
+1 | import collections
+  | ^^^^^^^^^^^^^^^^^^
+2 | try:
+3 |     from collections.abc import Iterable
+  |
+help: Organize imports
+  |
+1 | import collections
+2 +
+3 | try:
+  |
+
+F401 [*] `collections` imported but unused
+ --> click/_bashcomplete.py:1:8
+  |
+1 | import collections
+  |        ^^^^^^^^^^^
+2 | try:
+3 |     from collections.abc import Iterable
+  |
+help: Remove unused import: `collections`
+  |
+  - import collections
+1 | try:
+  |
+
+UP035 [*] Import from `collections.abc` instead: `Iterable`
+ --> click/_bashcomplete.py:5:5
+  |
+3 |     from collections.abc import Iterable
+4 | except ImportError:
+5 |     from collections import Iterable
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+6 | import copy
+7 | import os
+  |
+help: Import from `collections.abc`
+  |
+4 | except ImportError:
+  -     from collections import Iterable
+5 +     from collections.abc import Iterable
+6 | import copy
+  |
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> click/_bashcomplete.py:6:1
+   |
+ 4 |   except ImportError:
+ 5 |       from collections import Iterable
+ 6 | / import copy
+ 7 | | import os
+ 8 | | import re
+ 9 | |
+10 | | from .utils import echo
+11 | | from .parser import split_arg_string
+12 | | from .core import MultiCommand, Option, Argument
+13 | | from .types import Choice
+   | |_________________________^
+14 |
+15 |   WORDBREAK = '='
+   |
+help: Organize imports
+   |
+9  |
+   - from .utils import echo
+10 + from .core import Argument, MultiCommand, Option
+11 | from .parser import split_arg_string
+   - from .core import MultiCommand, Option, Argument
+12 | from .types import Choice
+13 + from .utils import echo
+14 |
+   |
+
+UP031 Use format specifiers instead of percent format
+  --> click/_bashcomplete.py:35:26
+   |
+33 |     cf_name = _invalid_ident_char_re.sub('', prog_name.replace('-', '_'))
+34 |     return (COMPLETION_SCRIPT % {
+35 |         'complete_func': '_%s_completion' % cf_name,
+   |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+36 |         'script_names': prog_name,
+37 |         'autocomplete_var': complete_var,
+   |
+help: Replace with format specifiers
+
+SIM210 Use `bool(...)` instead of `True if ... else False`
+  --> click/_bashcomplete.py:92:12
+   |
+90 |             last_option = arg_str
+91 |
+92 |     return True if last_option and last_option in cmd_param.opts else False
+   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+help: Replace with `bool(...)
+
+SIM103 Return the condition directly
+   --> click/_bashcomplete.py:109:5
+    |
+107 |       if cmd_param.nargs == -1:
+108 |           return True
+109 | /     if isinstance(current_param_values, Iterable) \
+110 | |             and cmd_param.nargs > 1 and len(current_param_values) < cmd_param.nargs:
+111 | |         return True
+112 | |     return False
+    | |________________^
+help: Inline condition
+
+UP009 [*] UTF-8 encoding declaration is unnecessary
+ --> tests/test_bashcomplete.py:1:1
+  |
+1 | # -*- coding: utf-8 -*-
+  | ^^^^^^^^^^^^^^^^^^^^^^^
+2 |
+3 | import click
+  |
+help: Remove unnecessary coding comment
+  |
+  - # -*- coding: utf-8 -*-
+1 |
+  |
+
+Found 8 errors.
+[*] 5 fixable with the `--fix` option (3 hidden fixes can be enabled with the `--unsafe-fixes` option).
